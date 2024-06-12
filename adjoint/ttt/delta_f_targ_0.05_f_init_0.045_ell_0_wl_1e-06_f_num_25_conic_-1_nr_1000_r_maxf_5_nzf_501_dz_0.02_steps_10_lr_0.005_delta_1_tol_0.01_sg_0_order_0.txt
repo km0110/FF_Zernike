@@ -1,0 +1,16 @@
+f_targ = 0.05
+f_init = 0.045
+ell = 0
+wl = 1e-06
+f_num = 25
+conic = -1
+nr = 1000
+r_maxf = 5
+nzf = 501
+dz = 0.02
+steps = 10
+lr = 1e-13
+delta = 1
+tol = 1e-11
+sg = 0
+order = 0

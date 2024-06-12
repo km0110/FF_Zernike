@@ -397,3 +397,5 @@ if __name__ == "__main__":
         ax.axis("off")
     fig.tight_layout()
     plt.savefig("zernike.png")
+
+print("done")
