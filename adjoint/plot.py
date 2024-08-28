@@ -201,12 +201,12 @@ def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
         if i % 50 == 0:
             print("PRPT_OA step: %d" % i)
         plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.plot(z / f, np.real(ftf_t[0, :]), label=r"$\phi_T$")
+        plt.plot((z - f)*100, np.real(ftf_t[0, :]), label=r"$\phi_T$")
 
-        plt.plot(z / f, np.real(ref), label=r"$\phi_R$")
+        plt.plot((z - f)*100, np.real(ref), label=r"$\phi_R$")
         plt.title("Step: %d" % i)
         plt.ylabel("On-axis amplitude")
-        plt.xlabel(r"$z/f$")
+        plt.xlabel(r"$z-f$ (cm)")
         plt.legend()
         #     plt.show()
         plt.tight_layout()

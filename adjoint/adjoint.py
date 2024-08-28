@@ -28,6 +28,9 @@ def calc_Z(rho):
     ]
     return np.column_stack(pols)
 
+def calc_Z_plus(Z):
+    ZTZ_inv = np.linalg.inv(Z.T @ Z)
+    return ZTZ_inv @ Z.T
 
 def create_initial_coeff(rmax, R):
     return rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0])
@@ -134,6 +137,7 @@ def w_xp(r, wR, delta):
         weight[0] = 1
         return weight
     else:
+        # return np.ones(len(r))
         return np.exp(-(r**2) / wR**2)
 
 
@@ -146,6 +150,8 @@ def w_z(z, zi, zf, sg=False, order=2):
     if sg:
         weight[i:f] = np.exp(-(((z[i:f] - zi) / (zf - zi)) ** order))
     else:
+        # weight = np.zeros(len(z))
+        # weight[(f - i) // 2] = 1
         weight[i:f] = 1
     return weight
 

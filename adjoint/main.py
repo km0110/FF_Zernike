@@ -70,6 +70,8 @@ ftf_t = forward_propagation(
 a_n = create_initial_coeff(rmax, 2 * f_init)
 rho = r / rmax
 Z_fit = calc_Z(rho)
+Z_plus = calc_Z_plus(Z_fit)
+
 zm_r = generate_optic(a_n, Z_fit)  # initial mirror
 
 data_names = [
@@ -108,7 +110,9 @@ while change > tol and i < steps:
 
     # Calculating the gradient and updating the mirror
     dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
-    dfda = dfdz @ Z_fit
+    # dfda = dfdz @ Z_fit
+    dfda = Z_plus @ dfdz
+    Z_plus = calc_Z_plus(Z_fit)
     a_n = step(dfda, lr, a_n)
     zm_r = generate_optic(a_n, Z_fit)
 
@@ -157,7 +161,7 @@ plot_mirror_comp(path, r, w0, zm_t, mr, i)
 pplots = time.time()
 print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
 
-# Plotting each iteration phi_r and phi_t, the gradient and the source
+#Plotting each iteration phi_r and phi_t, the gradient and the source
 plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
 prft = time.time()
 print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
@@ -169,8 +173,6 @@ print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 plot_da_vs_grad(path, lr, gr, r, w0, wl, zern)
 pdzt = time.time()
 print("G Time:" + str(timedelta(seconds=pdzt - proat)))
-
-plot_da_vs_grad_norm(path, lr, gr, r, w0, wl, zern)
 
 plot_s(path, src, zF, f_targ)
 ps = time.time()
