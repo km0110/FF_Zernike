@@ -28,7 +28,7 @@ if len(sys.argv) != 3:
 
 path = sys.argv[1]
 fps = int(sys.argv[2])
-steps = count_files(path + "/g/")
+steps = count_files(path + "/phr_f/")-1
 
 gr = imageio.get_writer(path + "/grad_%d.mp4" % (steps), fps=fps)
 phr_f = imageio.get_writer(path + "/phi_r_f_%d.mp4" % (steps), fps=fps)

@@ -24,12 +24,13 @@ params = {
     "r_maxf": 5,
     "nzf": 501,
     "dz": 2e-2,
-    "steps": 10,
-    "lr": 5e-3,
+    "steps": 10000,
+    "lr": 1e-10,
     "delta": 1,
-    "tol": 1e-2,
+    "tol": 1e-10,
     "sg": 0,
     "order": 0,
+    "mu":0.95
 }
 
 
@@ -76,12 +77,15 @@ def create_run_files(file_dir, param):
 
 
 def main():
-    if check_spot_size(params):
-        dirname = sys.argv[1]
-        os.makedirs(dirname, exist_ok=True)
-        create_run_files(dirname, params)
-    else:
-        print("Spot size is too small for the given parameters")
+    # if check_spot_size(params):
+    #     dirname = sys.argv[1]
+    #     os.makedirs(dirname, exist_ok=True)
+    #     create_run_files(dirname, params)
+    # else:
+    #     print("Spot size is too small for the given parameters")
+    dirname = sys.argv[1]
+    os.makedirs(dirname, exist_ok=True)
+    create_run_files(dirname, params)
 
 
 if __name__ == "__main__":
