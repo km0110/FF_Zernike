@@ -70,6 +70,7 @@ ftf_t = forward_propagation(
 a_n = create_initial_coeff(rmax, 2 * f_init)
 rho = r / rmax
 Z_fit = calc_Z(rho)
+Z_plus = calc_Z_plus(Z_fit)
 zm_r = generate_optic(a_n, Z_fit)  # initial mirror
 
 data_names = [
@@ -108,7 +109,8 @@ while change > tol and i < steps:
 
     # Calculating the gradient and updating the mirror
     dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
-    dfda = dfdz @ Z_fit
+    # dfda = dfdz @ Z_fit
+    dfda = Z_plus @ dfdz
     a_n = step(dfda, lr, a_n)
     zm_r = generate_optic(a_n, Z_fit)
 

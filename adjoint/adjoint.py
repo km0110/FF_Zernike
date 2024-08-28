@@ -29,6 +29,11 @@ def calc_Z(rho):
     return np.column_stack(pols)
 
 
+def calc_Z_plus(Z):
+    ZTZ_inv = np.linalg.inv(Z.T @ Z)
+    return ZTZ_inv @ Z.T
+
+
 def create_initial_coeff(rmax, R):
     return rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0])
 
@@ -95,7 +100,7 @@ def mirror(phiI, k0, zm):
 # In[8]:
 
 
-def forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
+def forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
     k0 = 2 * np.pi / wavelength
     #     fT_i=prop(phi_I,k,k0,zI,T_R2K,T_K2R)
     phi_R0 = mirror(phi_I, k0, zm)
@@ -134,7 +139,8 @@ def w_xp(r, wR, delta):
         weight[0] = 1
         return weight
     else:
-        return np.exp(-(r**2) / wR**2)
+        return 1
+        # return np.exp(-(r**2) / wR**2)
 
 
 # In[13]:
@@ -146,7 +152,10 @@ def w_z(z, zi, zf, sg=False, order=2):
     if sg:
         weight[i:f] = np.exp(-(((z[i:f] - zi) / (zf - zi)) ** order))
     else:
-        weight[i:f] = 1
+        weight = np.zeros(len(z))
+        weight[(f - i) // 2] = 1
+
+        # weight[i:f] = 1
     return weight
 
 
@@ -230,11 +239,6 @@ def adjoint(r, wR, k, k0, z, zmin, zmax, phi_r, phi_t, T_R2K, delta):
     s_hat = T_R2K @ s
     psi_hat = calc_psi_hat(k, k0, z, s_hat)
     return psi_hat
-
-
-def matmult(Z):
-    ZTZ_inv = np.linalg.inv(Z.T @ Z)
-    return ZTZ_inv @ Z.T
 
 
 # In[22]:

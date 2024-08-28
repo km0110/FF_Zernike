@@ -81,7 +81,7 @@ def mirror(phiI, k0, zm):
 # In[8]:
 
 
-def forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
+def forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
     k0 = 2 * np.pi / wavelength
     #     fT_i=prop(phi_I,k,k0,zI,T_R2K,T_K2R)
     phi_R0 = mirror(phi_I, k0, zm)
