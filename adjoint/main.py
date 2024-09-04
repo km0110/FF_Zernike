@@ -170,13 +170,13 @@ plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_da_vs_grad(path, lr, gr, r, w0, wl, zern)
-pdzt = time.time()
-print("G Time:" + str(timedelta(seconds=pdzt - proat)))
+# plot_da_vs_grad(path, lr, gr, r, w0, wl, zern)
+# pdzt = time.time()
+# print("G Time:" + str(timedelta(seconds=pdzt - proat)))
 
-plot_s(path, src, zF, f_targ)
-ps = time.time()
-print("S Time:" + str(timedelta(seconds=ps - pdzt)))
+# plot_s(path, src, zF, f_targ)
+# ps = time.time()
+# print("S Time:" + str(timedelta(seconds=ps - pdzt)))
 
 pend = time.time()
 

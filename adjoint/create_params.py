@@ -24,13 +24,14 @@ params = {
     "r_maxf": 5,
     "nzf": 501,
     "dz": 2e-2,
-    "steps": 10000,
+    "steps": 6000,
     "lr": 1e-10,
     "delta": 1,
     "tol": 1e-10,
     "sg": 0,
     "order": 0,
-    "mu":0.95
+    "mu": 0.95,
+    "temp": [10, 100, 1000],
 }
 
 

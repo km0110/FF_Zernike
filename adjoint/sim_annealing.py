@@ -53,6 +53,7 @@ steps = params["steps"]  # max number of steps algorithm is allowed
 lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
+temp = params["temp"]
 
 ################################################
 print(w0)
@@ -60,19 +61,6 @@ print(w0)
 [r, k] = DHTarrays(nr, rmax, ell)
 [T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
 
-# Initial propagation
-phi_I = 1j * np.exp(-((r / w0) ** 2))
-zm_t = create_starting_optic(r, 2 * f_targ)  # target mirror
-ftf_t = forward_propagation(
-    w0, r, k, phi_I, T_R2K, T_K2R, zF, zm_t
-)  # Target profile defined using target mirror
-
-a_n = create_initial_coeff(rmax, 2 * f_init)
-rho = r / rmax
-Z_fit = calc_Z(rho)
-Z_plus = calc_Z_plus(Z_fit)
-
-zm_r = generate_optic(a_n, Z_fit)  # initial mirror
 
 data_names = [
     "phi_r_OA.csv",
@@ -89,32 +77,78 @@ change = 1000
 i = 0
 start_time = time.time()
 data = []
-while change > tol and i < steps:
+
+# Initial propagation
+phi_I = 1j * np.exp(-((r / w0) ** 2))
+zm_t = create_starting_optic(r, 2 * f_targ)  # target mirror
+ftf_t = forward_propagation(
+    w0, r, k, phi_I, T_R2K, T_K2R, zF, zm_t
+)  # Target profile defined using target mirror
+
+best_a_n = create_initial_coeff(rmax, 2 * f_init)
+rho = r / rmax
+Z_fit = calc_Z(rho)
+Z_plus = calc_Z_plus(Z_fit)
+
+curr_zm_r = generate_optic(best_a_n, Z_fit)  # initial mirror
+curr_ftf_r = forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, curr_zm_r)
+
+# Calculating Integrals for Source
+curr_pR, curr_pT = weighted_phi(
+    r, wR, zF, f_targ - dz, f_targ + dz, curr_ftf_r, ftf_t, delta
+)
+curr_prsq, curr_prpt, curr_ptsq = int_pairs(
+    r, zF, curr_pR, curr_pT, curr_ftf_r, ftf_t
+)  # phi_r_sq, phi_r_phi_t, phi_t_sq
+best_fom = FOM(curr_prsq, curr_prpt, curr_ptsq)
+curr_a_n, curr_fom = best_a_n, best_fom
+
+data.append(np.real([curr_prsq, curr_prpt, curr_ptsq]))
+for i in range(steps):
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Forward propagation
-    ftf_r = forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, zm_r)
-
-    # Calculating Integrals for Source
-    pR, pT = weighted_phi(r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta)
-    prsq, prpt, ptsq = int_pairs(
-        r, zF, pR, pT, ftf_r, ftf_t
-    )  # phi_r_sq, phi_r_phi_t, phi_t_sq
-    data.append(np.real([prsq, prpt, ptsq]))
 
     # Calculating S and psi
-    s = S(pR, pT, prpt, ptsq)
+    s = S(curr_pR, curr_pT, curr_prpt, curr_ptsq)
     s_hat = T_R2K @ s
     psi_hat = calc_psi_hat(k, k0, zF, s_hat)
     psi = T_K2R @ psi_hat
 
     # Calculating the gradient and updating the mirror
-    dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
+    dfdz = np.real(gradient(k0, phi_I, psi, curr_a_n, Z_fit))
     # dfda = dfdz @ Z_fit
     dfda = Z_plus @ dfdz
     Z_plus = calc_Z_plus(Z_fit)
-    a_n = step(dfda, lr, a_n)
-    zm_r = generate_optic(a_n, Z_fit)
+
+    # calculate the candidate mirror and the FOM score for it
+    cand_a_n = step(dfda, np.random.random() * lr, a_n)
+    cand_zm_r = generate_optic(a_n, Z_fit)
+
+    cand_ftf_r = forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, zm_r)
+
+    # Calculating Integrals for Source
+    cand_pR, cand_pT = weighted_phi(
+        r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta
+    )
+    cand_prsq, cand_prpt, cand_ptsq = int_pairs(
+        r, zF, cand_pR, cand_pT, cand_ftf_r, ftf_t
+    )  # phi_r_sq, phi_r_phi_t, phi_t_sq
+    cand_fom = FOM(cand_prsq, cand_prpt, cand_ptsq)
+
+    if cand_fom < curr_fom:
+        best_a_n, best_fom_fom = cand_a_n, cand_fom
+        data.append(np.real([cand_prsq, cand_prpt, cand_ptsq]))
+
+    diff = cand_fom - curr_fom
+    t = temp / float(i + 1)
+    metropolis = np.exp(-diff / t)
+    if diff < 0 or np.random.random() < metropolis:
+        curr_a_n, curr_fom = cand_a_n, cand_fom
+        curr_zm_r = cand_zm_r
+        curr_ftf_r = cand_ftf_r
+        curr_pR, curr_pT = cand_pR, cand_pT
+        curr_prsq, curr_prpt, curr_ptsq = cand_prsq, cand_prpt, cand_ptsq
 
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
