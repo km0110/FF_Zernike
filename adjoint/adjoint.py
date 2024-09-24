@@ -21,19 +21,21 @@ def create_starting_optic(r, R, k=-1):
 
 
 def calc_Z(rho):
-    pols = [
-        np.ones_like(rho),  # 1st polynomial is constant
-        np.sqrt(3) * (2 * rho**2 - 1),  # 2nd polynomial
-        np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1),  # 3rd polynomial
-    ]
+    pols = np.array(
+        [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1)]  # 1st polynomial is constant
+    )
+    # np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1),  # 3rd polynomial
+
     return np.column_stack(pols)
+
 
 def calc_Z_plus(Z):
     ZTZ_inv = np.linalg.inv(Z.T @ Z)
     return ZTZ_inv @ Z.T
 
+
 def create_initial_coeff(rmax, R):
-    return rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0])
+    return rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3))])
 
 
 def generate_optic(a_n, zernpol):
@@ -98,7 +100,7 @@ def mirror(phiI, k0, zm):
 # In[8]:
 
 
-def forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
+def forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
     k0 = 2 * np.pi / wavelength
     #     fT_i=prop(phi_I,k,k0,zI,T_R2K,T_K2R)
     phi_R0 = mirror(phi_I, k0, zm)

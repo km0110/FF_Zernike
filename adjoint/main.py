@@ -19,7 +19,7 @@ path = "runs/" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-subdir = ["phr_f", "pr_oa", "g", "s"]
+subdir = ["phr_f", "pr_oa", "g", "s", "mirror"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
@@ -64,10 +64,11 @@ print(w0)
 phi_I = 1j * np.exp(-((r / w0) ** 2))
 zm_t = create_starting_optic(r, 2 * f_targ)  # target mirror
 ftf_t = forward_propagation(
-    w0, r, k, phi_I, T_R2K, T_K2R, zF, zm_t
+    k, phi_I, T_R2K, T_K2R, zF, zm_t
 )  # Target profile defined using target mirror
 
 a_n = create_initial_coeff(rmax, 2 * f_init)
+print(a_n)
 rho = r / rmax
 Z_fit = calc_Z(rho)
 Z_plus = calc_Z_plus(Z_fit)
@@ -93,7 +94,7 @@ while change > tol and i < steps:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Forward propagation
-    ftf_r = forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, zm_r)
+    ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
     pR, pT = weighted_phi(r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta)
@@ -124,7 +125,7 @@ while change > tol and i < steps:
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
     i += 1
-fr = forward_propagation(w0, r, k, phi_I, T_R2K, T_K2R, zF, zm_r)
+fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
 final_time = time.time()
 if i < steps:
@@ -156,6 +157,10 @@ plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr, i)
+plot_mirror_comp_each(path, r, w0, zm_t, mr)
+plot_mirror_all(path, r, w0, mr)
+
+plot_zernikes(path, zern, rmax, f_targ)
 # plot_mirror_comp(path, r, w0, zm_t, mr, i, conic, do_shift=True)
 # plot_mirror_be_af(path, r, w0, mr)
 pplots = time.time()

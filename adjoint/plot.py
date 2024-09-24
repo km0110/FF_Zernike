@@ -6,7 +6,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from adjoint import create_starting_optic, calc_Z
+from adjoint import create_initial_coeff, calc_Z
 
 font = {"size": 26}
 
@@ -146,6 +146,68 @@ def plot_mirror_comp(
     plt.tight_layout()
     plt.savefig(path + "/mirror_comp.png")
     plt.close()
+
+
+# plot mirror at each step and compare to target and save to file
+def plot_mirror_comp_each(path, r, w0, z_m, mr, xlim=(0, 2), ylim=(0, 3e-5)):
+    for i, ref in enumerate(mr):
+        if i % 50 == 0:
+            print("Mirror step: %d" % i)
+        plt.figure(figsize=(11.52, 6.56), dpi=100)
+        plt.plot(r / w0, z_m, label="Target Mirror")
+        plt.plot(r / w0, ref, label="Mirror at step %d" % i)
+        # keep xlim and ylim across all plots by setting it based on min and max x and y values in mr
+        plt.xlim(xlim)
+        plt.ylim(ylim)
+        plt.legend()
+        plt.xlabel(r"$r/w_0$")
+        plt.ylabel("z (m)")
+        plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
+        plt.tight_layout()
+        plt.savefig(path + "/mirror/mirror_comp_%d" % i, dpi=100)
+        plt.close()
+
+
+# plot all of the mirror steps on one plot
+def plot_mirror_all(path, r, w0, mr):
+    for i, ref in enumerate(mr):
+        if i % 50 == 0:
+            print("Mirror step: %d" % i)
+        plt.plot(r / w0, ref, label="Mirror at step %d" % i)
+        plt.xlim(0, 2)
+        plt.ylim(np.min(mr), np.max(mr) / 5)
+        plt.legend()
+        plt.xlabel(r"$r/w_0$")
+        plt.ylabel("z (m)")
+        plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
+        plt.tight_layout()
+    plt.savefig(path + "/mirror/mirror_all", dpi=100)
+    plt.close()
+
+
+def plot_zernikes(path, zern, rmax, f_targ):
+    # each column should be a separate plot
+    for i in range(zern.shape[1]):
+        plt.plot(zern[:, i], label=f"Zernike {i}")
+    plt.xlabel("Iteration")
+    plt.ylabel("Coefficient")
+
+    # ideal coefficients for the target mirror
+    zm_t = create_initial_coeff(rmax, 2 * f_targ)
+
+    # create horizontal lines for each y value in zm_t
+    for i, z in enumerate(zm_t):
+        # different colors for each line
+        plt.axhline(
+            z,
+            linestyle="--",
+            c=plt.cm.viridis(i / len(zm_t)),
+            label=f"Target Zernike {i} = {z}",
+        )
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(path + "/zernikes.png")
 
 
 # In[10]:
