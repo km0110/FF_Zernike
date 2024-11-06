@@ -20,12 +20,18 @@ def create_starting_optic(r, R, k=-1):
     return z
 
 
-def calc_Z(rho):
-    pols = np.array(
-        [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1)]  # 1st polynomial is constant
-    )
-    # np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1),  # 3rd polynomial
+def calc_Z(rho, n):
+    # pols = np.array(
+    #     [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1), np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1)]  
+    # )
 
+    zern_pols = np.array(
+        [np.ones_like(rho), 
+         np.sqrt(3) * (2 * rho**2 - 1), 
+         np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1), 
+         np.sqrt(7)*(20*rho**6 - 30*rho**4 + 12*rho**2 - 1)]  
+    )
+    pols=zern_pols[:n]
     return np.column_stack(pols)
 
 
@@ -34,8 +40,10 @@ def calc_Z_plus(Z):
     return ZTZ_inv @ Z.T
 
 
-def create_initial_coeff(rmax, R):
-    return rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3))])
+def create_initial_coeff(rmax, R, n):
+    zern_coeff=rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0, 0])
+    coeff=zern_coeff[:n]                                            
+    return coeff
 
 
 def generate_optic(a_n, zernpol):

@@ -33,26 +33,27 @@ steps = count_files(path + "/phr_f/")-1
 gr = imageio.get_writer(path + "/grad_%d.mp4" % (steps), fps=fps)
 phr_f = imageio.get_writer(path + "/phi_r_f_%d.mp4" % (steps), fps=fps)
 phr_oa = imageio.get_writer(path + "/phi_r_oa_%d.mp4" % (steps), fps=fps)
-s = imageio.get_writer(path + "/s%d.mp4" % (steps), fps=fps)
+mir = imageio.get_writer(path + "/mirror_%d.mp4" % (steps), fps=fps)
+
 for i in range(0, steps, 1):
     gr_f = path + "/g/g_%d.png" % i
     pr_f = path + "/phr_f/phr_f_%d.png" % i
     proa_f = path + "/pr_oa/pr_oa_%d.png" % i
-    s_f = path + "/s/s_%d.png" % i
+    mir_f = path + "/mirror/mirror_comp_%d.png" % i
 
     gr_im = imageio.imread(gr_f)
     pr_im = imageio.imread(pr_f)
     proa_im = imageio.imread(proa_f)
-    s_im = imageio.imread(s_f)
+    mir_im = imageio.imread(mir_f)
 
     gr.append_data(gr_im)
     phr_f.append_data(pr_im)
     phr_oa.append_data(proa_im)
-    s.append_data(s_im)
+    mir.append_data(mir_im)
 
     if i % 50 == 0:
         print(i)
 gr.close()
 phr_f.close()
 phr_oa.close
-s.close()
+mir.close()

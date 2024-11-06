@@ -15,7 +15,7 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = "runs/" + dirname
+path = 'runs/main_'+dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
@@ -53,7 +53,7 @@ steps = params["steps"]  # max number of steps algorithm is allowed
 lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
-
+n = params['n']
 ################################################
 print(w0)
 # Hankel
@@ -67,10 +67,10 @@ ftf_t = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
 )  # Target profile defined using target mirror
 
-a_n = create_initial_coeff(rmax, 2 * f_init)
+a_n = create_initial_coeff(rmax, 2 * f_init,n)
 print(a_n)
 rho = r / rmax
-Z_fit = calc_Z(rho)
+Z_fit = calc_Z(rho,n)
 Z_plus = calc_Z_plus(Z_fit)
 
 zm_r = generate_optic(a_n, Z_fit)  # initial mirror
@@ -149,7 +149,7 @@ print("START PLOTTING")
 pstart = time.time()
 
 # Plotting overall change
-plot_total_change(path, r, w0, zern, lr, wl, i, xlim=(0, 2))
+plot_total_change(path, r, w0, zern, lr, wl, i, n, xlim=(0, 2))
 print("1")
 plot_max_grad(path, gr)
 print("2")
@@ -158,9 +158,9 @@ print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr, i)
 plot_mirror_comp_each(path, r, w0, zm_t, mr)
-plot_mirror_all(path, r, w0, mr)
+# plot_mirror_all(path, r, w0, mr)
 
-plot_zernikes(path, zern, rmax, f_targ)
+plot_zernikes(path, zern, rmax, f_targ, n)
 # plot_mirror_comp(path, r, w0, zm_t, mr, i, conic, do_shift=True)
 # plot_mirror_be_af(path, r, w0, mr)
 pplots = time.time()
@@ -175,9 +175,10 @@ plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-# plot_da_vs_grad(path, lr, gr, r, w0, wl, zern)
-# pdzt = time.time()
-# print("G Time:" + str(timedelta(seconds=pdzt - proat)))
+plot_da_vs_grad(path, lr, gr, r, w0, wl, zern,n)
+pdzt = time.time()
+print("G Time:" + str(timedelta(seconds=pdzt - proat)))
+plot_mirror_comp_each(path, r, w0, zm_t, mr)
 
 # plot_s(path, src, zF, f_targ)
 # ps = time.time()

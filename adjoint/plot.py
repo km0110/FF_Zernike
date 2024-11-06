@@ -43,8 +43,8 @@ def shift(mirror, spikes):
 # In[2]:
 
 
-def plot_total_change(path, r, w0, gr, lr, wl, steps, xlim, spikes=None):
-    Z_fit = calc_Z(r / np.max(r))
+def plot_total_change(path, r, w0, gr, lr, wl, steps, n, xlim, spikes=None):
+    Z_fit = calc_Z(r / np.max(r), n)
 
     dfda = Z_fit @ gr.T
     print(np.shape(dfda))
@@ -149,12 +149,12 @@ def plot_mirror_comp(
 
 
 # plot mirror at each step and compare to target and save to file
-def plot_mirror_comp_each(path, r, w0, z_m, mr, xlim=(0, 2), ylim=(0, 3e-5)):
+def plot_mirror_comp_each(path, r, w0, zm_t, mr, xlim=(0, 2), ylim=(0, 3e-5)):
     for i, ref in enumerate(mr):
         if i % 50 == 0:
             print("Mirror step: %d" % i)
         plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.plot(r / w0, z_m, label="Target Mirror")
+        plt.plot(r / w0, zm_t, label="Target Mirror")
         plt.plot(r / w0, ref, label="Mirror at step %d" % i)
         # keep xlim and ylim across all plots by setting it based on min and max x and y values in mr
         plt.xlim(xlim)
@@ -185,15 +185,15 @@ def plot_mirror_all(path, r, w0, mr):
     plt.close()
 
 
-def plot_zernikes(path, zern, rmax, f_targ):
+def plot_zernikes(path, zern, rmax, f_targ, n):
     # each column should be a separate plot
     for i in range(zern.shape[1]):
-        plt.plot(zern[:, i], label=f"Zernike {i}")
+        plt.plot(zern[:, i], label=f"Zernike Z{2*i},0")
     plt.xlabel("Iteration")
     plt.ylabel("Coefficient")
 
     # ideal coefficients for the target mirror
-    zm_t = create_initial_coeff(rmax, 2 * f_targ)
+    zm_t = create_initial_coeff(rmax, 2 * f_targ, n)
 
     # create horizontal lines for each y value in zm_t
     for i, z in enumerate(zm_t):
@@ -202,7 +202,7 @@ def plot_zernikes(path, zern, rmax, f_targ):
             z,
             linestyle="--",
             c=plt.cm.viridis(i / len(zm_t)),
-            label=f"Target Zernike {i} = {z}",
+            label="Target Zernike Z%i0 = %.2e" %(i,z),
         )
     plt.legend()
 
@@ -281,9 +281,9 @@ def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
 # In[37]:
 
 
-def plot_da_vs_grad(path, lr, gr, r, w0, wl, zern):
+def plot_da_vs_grad(path, lr, gr, r, w0, wl, zern, n):
     i = 0
-    Z_fit = calc_Z(r / np.max(r))
+    Z_fit = calc_Z(r / np.max(r), n)
     dfda = Z_fit @ zern.T
     grmax = np.max(gr)
     damax = np.max(dfda)
@@ -292,7 +292,7 @@ def plot_da_vs_grad(path, lr, gr, r, w0, wl, zern):
             print("G step: %d" % i)
         plt.figure(figsize=(11.52, 6.56), dpi=100)
         plt.scatter(r / w0, dzm, label="df/dz")
-        plt.scatter(r / w0, da, label="df/da")
+        plt.scatter(r / w0, da, label="Zernike Fit on df/dz")
         # plt.plot(r,np.real(ref),label='real')
         plt.title("Step: %d" % i)
         plt.ylabel(r"$\delta z/\lambda$ ")
@@ -304,34 +304,6 @@ def plot_da_vs_grad(path, lr, gr, r, w0, wl, zern):
         plt.legend()
         plt.tight_layout()
         plt.savefig(path + "/g/g_%d" % (i), dpi=100)
-
-        plt.close()
-        i += 1
-
-
-def plot_da_vs_grad_norm(path, lr, gr, r, w0, wl, zern):
-    i = 0
-    Z_fit = calc_Z(r / np.max(r))
-    dfda = Z_fit @ zern.T
-    grmax = np.max(gr)
-    damax = np.max(dfda)
-    for dzm, da in zip(gr, dfda.T):
-        if i % 50 == 0:
-            print("G step: %d" % i)
-        plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.scatter(r / w0, dzm / grmax, label="df/dz")
-        plt.scatter(r / w0, da / damax, label="df/da")
-        # plt.plot(r,np.real(ref),label='real')
-        plt.title("Step: %d" % i)
-        plt.ylabel(r"$\delta z/\lambda$ ")
-        plt.xlabel(r"$r/w_0$")
-        plt.axhline(0, linestyle="--", c="k")
-        plt.xlim((0, 2))
-        # plt.ylim((np.min(zern) / wl, np.max(zern) / wl))
-        #     plt.show()
-        plt.tight_layout()
-        plt.legend()
-        plt.savefig(path + "/g/gnorm_%d" % (i), dpi=100)
 
         plt.close()
         i += 1
