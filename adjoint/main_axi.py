@@ -214,3 +214,7 @@ plot_mirror_comp_each(path, r, w0, zm_t, mr)
 pend = time.time()
 
 print("Total Time:" + str(timedelta(seconds=pend - pstart)))
+
+# add to time.txt the time it took to plot
+with open(path + "/time.txt", "a") as file:
+    file.write("\nPlotting Time:" + str(timedelta(seconds=pend - pstart)))
