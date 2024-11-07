@@ -222,7 +222,7 @@ def plot_zernikes(path, zern, rmax, f_targ, n):
     #         c=plt.cm.viridis(i / len(zm_t)),
     #         label="Target Zernike Z%i0 = %.2e" % (i, z),
     #     )
-    # plt.legend()
+    plt.legend()
 
     plt.tight_layout()
     plt.savefig(path + "/zernikes.png")
