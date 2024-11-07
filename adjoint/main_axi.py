@@ -145,16 +145,21 @@ while change > tol and i < steps:
 fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
 final_time = time.time()
+
 if i < steps:
-    print(
-        "Algorithm converged in %d steps \nTotal Time:" % (i)
-        + str(timedelta(seconds=final_time - start_time))
+    output = "Algorithm converged in %d steps \nTotal Time:" % (i) + str(
+        timedelta(seconds=final_time - start_time)
     )
 else:
-    print(
-        "Algorithm failed to converge in %d steps \nTotal Time:" % (i)
-        + str(timedelta(seconds=final_time - start_time))
+    output = "Algorithm failed to converge in %d steps \nTotal Time:" % (i) + str(
+        timedelta(seconds=final_time - start_time)
     )
+
+print(output)
+
+# write to output file how long it took to run
+with open(path + "/time.txt", "w") as file:
+    file.write(output)
 
 ################################################
 # create plots
