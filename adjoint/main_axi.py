@@ -178,32 +178,32 @@ plot_mirror_comp_each(path, r, w0, zm_t, mr)
 # plot_mirror_all(path, r, w0, mr)
 
 plot_zernikes(path, zern, rmax, f_targ, n)
-# plot_mirror_comp(path, r, w0, zm_t, mr, i, conic, do_shift=True)
-# plot_mirror_be_af(path, r, w0, mr)
-# pplots = time.time()
-# print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
+plot_mirror_comp(path, r, w0, zm_t, mr, i, conic)
+plot_mirror_be_af(path, r, w0, mr)
+pplots = time.time()
+print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
 
-# # Plotting each iteration phi_r and phi_t, the gradient and the source
-# plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
-# prft = time.time()
-# print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
+# Plotting each iteration phi_r and phi_t, the gradient and the source
+plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
+prft = time.time()
+print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-# plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
-# proat = time.time()
-# print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
+plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
+proat = time.time()
+print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-# plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t)
+plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t)
 
-# plot_da_vs_grad(path, gr, r, w0, zern, n)
-# pdzt = time.time()
-# print("G Time:" + str(timedelta(seconds=pdzt - proat)))
-# plot_mirror_comp_each(path, r, w0, zm_t, mr)
+plot_da_vs_grad(path, gr, r, w0, zern, n)
+pdzt = time.time()
+print("G Time:" + str(timedelta(seconds=pdzt - proat)))
+plot_mirror_comp_each(path, r, w0, zm_t, mr)
 
 
-# # plot_s(path, src, zF, f_targ)
-# # ps = time.time()
-# # print("S Time:" + str(timedelta(seconds=ps - pdzt)))
+# plot_s(path, src, zF, f_targ)
+# ps = time.time()
+# print("S Time:" + str(timedelta(seconds=ps - pdzt)))
 
-# pend = time.time()
+pend = time.time()
 
-# print("Total Time:" + str(timedelta(seconds=pend - pstart)))
+print("Total Time:" + str(timedelta(seconds=pend - pstart)))

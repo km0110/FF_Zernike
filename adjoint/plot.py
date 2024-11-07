@@ -214,18 +214,19 @@ def plot_zernikes(path, zern, rmax, f_targ, n):
     zm_t = create_initial_coeff(rmax, 2 * f_targ, n)
 
     # create horizontal lines for each y value in zm_t
-    for i, z in enumerate(zm_t):
-        # different colors for each line
-        plt.axhline(
-            z,
-            linestyle="--",
-            c=plt.cm.viridis(i / len(zm_t)),
-            label="Target Zernike Z%i0 = %.2e" % (i, z),
-        )
-    plt.legend()
+    # for i, z in enumerate(zm_t):
+    #     # different colors for each line
+    #     plt.axhline(
+    #         z,
+    #         linestyle="--",
+    #         c=plt.cm.viridis(i / len(zm_t)),
+    #         label="Target Zernike Z%i0 = %.2e" % (i, z),
+    #     )
+    # plt.legend()
 
     plt.tight_layout()
     plt.savefig(path + "/zernikes.png")
+    plt.close()
 
 
 # In[10]:
