@@ -24,7 +24,7 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = "runs/main_" + dirname
+path = path.split("/")[0] + "/runs/main_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
@@ -78,12 +78,12 @@ ftf_t = forward_propagation(
 )  # Target profile defined using target
 
 # save plot of ftf_t on axis
-print("Plotting ftf_t")
-plt.figure(figsize=(11.52, 6.56), dpi=100)
-plt.plot((zF - f_targ) * 100, np.real(ftf_t[0, :]))
-plt.savefig("check")
-plt.close()
-print("Done")
+# print("Plotting ftf_t")
+# plt.figure(figsize=(11.52, 6.56), dpi=100)
+# plt.plot((zF - f_targ) * 100, np.real(ftf_t[0, :]))
+# plt.savefig("check")
+# plt.close()
+# print("Done")
 a_n = create_initial_coeff(rmax, 2 * f_init, n)
 print(a_n)
 rho = r / rmax
@@ -166,7 +166,7 @@ print("START PLOTTING")
 pstart = time.time()
 
 # Plotting overall change
-plot_total_change(path, r, w0, zern, lr, wl, i, n, xlim=(0, 2))
+plot_total_change(path, r, w0, zern, lr, wl, i, n)
 print("1")
 plot_max_grad(path, gr)
 print("2")
@@ -180,27 +180,30 @@ plot_mirror_comp_each(path, r, w0, zm_t, mr)
 plot_zernikes(path, zern, rmax, f_targ, n)
 # plot_mirror_comp(path, r, w0, zm_t, mr, i, conic, do_shift=True)
 # plot_mirror_be_af(path, r, w0, mr)
-pplots = time.time()
-print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
+# pplots = time.time()
+# print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
 
-# Plotting each iteration phi_r and phi_t, the gradient and the source
-plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
-prft = time.time()
-print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
+# # Plotting each iteration phi_r and phi_t, the gradient and the source
+# plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
+# prft = time.time()
+# print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
-proat = time.time()
-print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
+# plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
+# proat = time.time()
+# print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_da_vs_grad(path, lr, gr, r, w0, wl, zern, n)
-pdzt = time.time()
-print("G Time:" + str(timedelta(seconds=pdzt - proat)))
-plot_mirror_comp_each(path, r, w0, zm_t, mr)
+# plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t)
 
-# plot_s(path, src, zF, f_targ)
-# ps = time.time()
-# print("S Time:" + str(timedelta(seconds=ps - pdzt)))
+# plot_da_vs_grad(path, gr, r, w0, zern, n)
+# pdzt = time.time()
+# print("G Time:" + str(timedelta(seconds=pdzt - proat)))
+# plot_mirror_comp_each(path, r, w0, zm_t, mr)
 
-pend = time.time()
 
-print("Total Time:" + str(timedelta(seconds=pend - pstart)))
+# # plot_s(path, src, zF, f_targ)
+# # ps = time.time()
+# # print("S Time:" + str(timedelta(seconds=ps - pdzt)))
+
+# pend = time.time()
+
+# print("Total Time:" + str(timedelta(seconds=pend - pstart)))

@@ -43,14 +43,14 @@ def shift(mirror, spikes):
 # In[2]:
 
 
-def plot_total_change(path, r, w0, gr, lr, wl, steps, n, xlim, spikes=None):
+def plot_total_change(path, r, w0, gr, lr, wl, steps, n, xlim=(0, 2), spikes=None):
     Z_fit = calc_Z(r / np.max(r), n)
-
+    norm_r = r / w0
     dfda = Z_fit @ gr.T
     print(np.shape(dfda))
     print(np.shape(np.sum(dfda, axis=1)))
     plt.scatter(
-        r / w0, -1 * np.sum(dfda, axis=1) * lr / wl, label="After %d Steps" % (steps)
+        norm_r, -1 * np.sum(dfda, axis=1) * lr / wl, label="After %d Steps" % (steps)
     )
     # plt.xlim((0,2*w0))
     plt.title("Total change in the mirror")
@@ -59,7 +59,10 @@ def plot_total_change(path, r, w0, gr, lr, wl, steps, n, xlim, spikes=None):
     plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
     # plt.axvline(w0,label='$w_0$',linestyle='--',c='k')
     plt.axhline(0, c="k", linewidth=1)
-    plt.xlim(xlim)
+    if max(norm_r) > 2:
+        plt.xlim(xlim)
+    else:
+        plt.xlim(xmin=0)
     if spikes != None:
         for s in r[spikes]:
             plt.axvline(s / w0, linestyle="--", c="k", linewidth=2)
@@ -128,17 +131,20 @@ def plot_max_grad(path, gr):
 # In[8]:
 
 
-def plot_mirror_comp(
-    path, r, w0, z_m, mr, steps, xlim=(0, 2), ylim=(0, 3e-5), do_shift=False
-):
-    plt.plot(r / w0, z_m, label="Target Mirror")
-    plt.plot(r / w0, mr[0], label="Initial Mirror")
-    plt.plot(r / w0, mr[-1], linestyle="--", label="Final Mirror")
+def plot_mirror_comp(path, r, w0, z_m, mr, xlim=(0, 2), ylim=(0, 3e-5)):
+    norm_r = r / w0
+    plt.plot(norm_r, z_m, label="Target Mirror")
+    plt.plot(norm_r, mr[0], label="Initial Mirror")
+    plt.plot(norm_r, mr[-1], linestyle="--", label="Final Mirror")
 
     # me=np.loadtxt('exp_mr.csv')
     # plt.plot(r,me,label='exp',linestyle='--',linewidth=3)
-    plt.xlim(xlim)
-    plt.ylim(ylim)
+    if max(norm_r) > 2:
+        plt.xlim(xlim)
+        plt.ylim(ylim)
+    else:
+        plt.xlim(xmin=0)
+        plt.ylim(ymin=0)
     plt.legend()
     plt.xlabel(r"$r/w_0$")
     plt.ylabel("z (m)")
@@ -150,15 +156,21 @@ def plot_mirror_comp(
 
 # plot mirror at each step and compare to target and save to file
 def plot_mirror_comp_each(path, r, w0, zm_t, mr, xlim=(0, 2), ylim=(0, 3e-5)):
+    norm_r = r / w0
+
     for i, ref in enumerate(mr):
         if i % 50 == 0:
             print("Mirror step: %d" % i)
         plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.plot(r / w0, zm_t, label="Target Mirror")
-        plt.plot(r / w0, ref, label="Mirror at step %d" % i)
+        plt.plot(norm_r, zm_t, label="Target Mirror")
+        plt.plot(norm_r, ref, label="Mirror at step %d" % i)
         # keep xlim and ylim across all plots by setting it based on min and max x and y values in mr
-        plt.xlim(xlim)
-        plt.ylim(ylim)
+        if max(norm_r) > 2:
+            plt.xlim(xlim)
+            plt.ylim(ylim)
+        else:
+            plt.xlim(xmin=0)
+            plt.ylim(ymin=0)
         plt.legend()
         plt.xlabel(r"$r/w_0$")
         plt.ylabel("z (m)")
@@ -169,13 +181,19 @@ def plot_mirror_comp_each(path, r, w0, zm_t, mr, xlim=(0, 2), ylim=(0, 3e-5)):
 
 
 # plot all of the mirror steps on one plot
-def plot_mirror_all(path, r, w0, mr):
+def plot_mirror_all(path, r, w0, mr, xlim=(0, 2), ylim=(0, 3e-5)):
+    norm_r = r / w0
+
     for i, ref in enumerate(mr):
         if i % 50 == 0:
             print("Mirror step: %d" % i)
-        plt.plot(r / w0, ref, label="Mirror at step %d" % i)
-        plt.xlim(0, 2)
-        plt.ylim(np.min(mr), np.max(mr) / 5)
+        plt.plot(norm_r, ref, label="Mirror at step %d" % i)
+        if max(norm_r) > 2:
+            plt.xlim(xlim)
+            plt.ylim(ylim)
+        else:
+            plt.xlim(xmin=0)
+            plt.ylim(ymin=0)
         plt.legend()
         plt.xlabel(r"$r/w_0$")
         plt.ylabel("z (m)")
@@ -213,13 +231,14 @@ def plot_zernikes(path, zern, rmax, f_targ, n):
 # In[10]:
 
 
+# back when the mirror was more discrete
 def plot_mirror_be_af(path, r, w0, mr, xlim=(0, 2), ylim=(0, 3e-5)):
     plt.plot(r / w0, mr[-1], label="Before shift", linewidth=3)
     sp = spikes(mr[-1])
     smr = shift(mr[-1], sp)
     plt.plot(r / w0, smr, label="After shift", linestyle="--", linewidth=3)
 
-    plt.xlim(xlim)
+    plt.xlim(xmin=0)
     plt.ylim(ylim)
     plt.legend()
     plt.xlabel(r"$r/w_0$")
@@ -258,6 +277,24 @@ def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl):
 # In[6]:
 
 
+def plot_phi_t_phi_r_OA_I(path, phr_oa, z, f, ftf_t):
+    for i, ref in enumerate(phr_oa):
+        if i % 50 == 0:
+            print("PRPT_OA step: %d" % i)
+        # plt.figure(figsize=(16, 6.56), dpi=100)
+        plt.plot((z - f) * 100, np.abs(ftf_t[0, :] ** 2), label=r"$\phi_T$")
+
+        plt.plot((z - f) * 100, np.abs(ref**2), label=r"$\phi_R$")
+        plt.title("Step: %d" % i)
+        plt.ylabel("On-axis Intensity")
+        plt.xlabel(r"$z-f$ (cm)")
+        plt.legend()
+        #     plt.show()
+        plt.tight_layout()
+        plt.savefig(path + "/pr_oa/pr_oa_%d" % i, dpi=100)
+        plt.close()
+
+
 def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
     for i, ref in enumerate(phr_oa):
         if i % 50 == 0:
@@ -267,7 +304,7 @@ def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
 
         plt.plot((z - f) * 100, np.real(ref), label=r"$\phi_R$")
         plt.title("Step: %d" % i)
-        plt.ylabel("On-axis amplitude")
+        plt.ylabel("On-axis Amplitude")
         plt.xlabel(r"$z-f$ (cm)")
         plt.legend()
         #     plt.show()
@@ -281,12 +318,11 @@ def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
 # In[37]:
 
 
-def plot_da_vs_grad(path, lr, gr, r, w0, wl, zern, n):
+def plot_da_vs_grad(path, gr, r, w0, zern, n):
     i = 0
     Z_fit = calc_Z(r / np.max(r), n)
     dfda = Z_fit @ zern.T
-    grmax = np.max(gr)
-    damax = np.max(dfda)
+    norm_r = r / w0
     for dzm, da in zip(gr, dfda.T):
         if i % 50 == 0:
             print("G step: %d" % i)
@@ -298,7 +334,10 @@ def plot_da_vs_grad(path, lr, gr, r, w0, wl, zern, n):
         plt.ylabel(r"$\delta z/\lambda$ ")
         plt.xlabel(r"$r/w_0$")
         plt.axhline(0, linestyle="--", c="k")
-        plt.xlim((0, 2))
+        if max(norm_r) > 2:
+            plt.xlim((0, 2))
+        else:
+            plt.xlim(xmin=0)
         # plt.ylim((np.min(zern) / wl, np.max(zern) / wl))
         #     plt.show()
         plt.legend()
