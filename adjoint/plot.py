@@ -202,7 +202,7 @@ def plot_zernikes(path, zern, rmax, f_targ, n):
             z,
             linestyle="--",
             c=plt.cm.viridis(i / len(zm_t)),
-            label="Target Zernike Z%i0 = %.2e" %(i,z),
+            label="Target Zernike Z%i0 = %.2e" % (i, z),
         )
     plt.legend()
 
@@ -240,7 +240,7 @@ def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl):
     for i, ref in enumerate(phr_f):
         if i % 50 == 0:
             print("PRPT_F step: %d" % i)
-        plt.figure(figsize=(11.52, 6.56), dpi=100)
+        # plt.figure(figsize=(11.52, 6.56), dpi=100)
         plt.plot(r / w0, np.real(ftf_t[:, fl]), label=r"$\phi_T(z=f)$")
 
         plt.plot(r / w0, np.real(ref), label=r"$\phi_R(z=f)$")
@@ -262,7 +262,7 @@ def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
     for i, ref in enumerate(phr_oa):
         if i % 50 == 0:
             print("PRPT_OA step: %d" % i)
-        plt.figure(figsize=(11.52, 6.56), dpi=100)
+        # plt.figure(figsize=(16, 6.56), dpi=100)
         plt.plot((z - f) * 100, np.real(ftf_t[0, :]), label=r"$\phi_T$")
 
         plt.plot((z - f) * 100, np.real(ref), label=r"$\phi_R$")
@@ -290,7 +290,7 @@ def plot_da_vs_grad(path, lr, gr, r, w0, wl, zern, n):
     for dzm, da in zip(gr, dfda.T):
         if i % 50 == 0:
             print("G step: %d" % i)
-        plt.figure(figsize=(11.52, 6.56), dpi=100)
+        # plt.figure(figsize=(11.52, 6.56), dpi=100)
         plt.scatter(r / w0, dzm, label="df/dz")
         plt.scatter(r / w0, da, label="Zernike Fit on df/dz")
         # plt.plot(r,np.real(ref),label='real')
@@ -313,7 +313,7 @@ def plot_s(path, s, z, f):
     for i, ref in enumerate(s):
         if i % 50 == 0:
             print("S step: %d" % i)
-        plt.figure(figsize=(11.52, 6.56), dpi=100)
+        # plt.figure(figsize=(11.52, 6.56), dpi=100)
         plt.plot(z / f, np.real(ref))
         plt.title("Step: %d" % i)
         plt.ylabel(r"$S=\phi_R-\mu\phi_T$")
