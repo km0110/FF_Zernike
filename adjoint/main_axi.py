@@ -53,7 +53,9 @@ L = params["L"]
 # Distance parameters
 dz = params["dz"]
 nzf = params["nzf"]
-zF = np.linspace(f_targ - dz, f_targ + L + dz, nzf)
+zi = f_targ - dz
+zf = f_targ + L + dz
+zF = np.linspace(zi, zf, nzf)
 fl = len(zF) // 4  # focal length index
 
 # Guess parameters
@@ -114,7 +116,7 @@ while change > tol and i < steps:
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    pR, pT = weighted_phi(r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta)
+    pR, pT = weighted_phi(r, wR, zF, zi, zf, ftf_r, ftf_t, delta)
     prsq, prpt, ptsq = int_pairs(
         r, zF, pR, pT, ftf_r, ftf_t
     )  # phi_r_sq, phi_r_phi_t, phi_t_sq
