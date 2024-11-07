@@ -22,7 +22,7 @@ params = {
     "conic": -1,
     "nr": 2000,
     "r_maxf": 1.3,
-    "nzf": 1000,
+    "nzf": 1001,
     "dz": 5e-2,
     "steps": 10,
     "lr": 1e-10,
