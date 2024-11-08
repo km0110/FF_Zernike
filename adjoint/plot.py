@@ -292,7 +292,7 @@ def plot_phi_t_phi_r_OA_I(path, phr_oa, z, f, ftf_t):
         plt.legend()
         #     plt.show()
         plt.tight_layout()
-        plt.savefig(path + "/pr_oa/pr_oa_%d" % i, dpi=100)
+        plt.savefig(path + "/pr_oa_I/pr_oa_I_%d" % i, dpi=100)
         plt.close()
 
 

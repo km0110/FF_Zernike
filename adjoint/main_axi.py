@@ -24,11 +24,11 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = path.split("/")[0] + "/runs/main_" + dirname
+path = path.split("/")[0] + "/runs/real_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-subdir = ["phr_f", "pr_oa", "g", "s", "mirror"]
+subdir = ["phr_f", "pr_oa", "pr_oa_I", "g", "s", "mirror"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
@@ -116,7 +116,7 @@ while change > tol and i < steps:
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    pR, pT = weighted_phi(r, wR, zF, zi, zf, ftf_r, ftf_t, delta)
+    pR, pT = weighted_phi(r, wR, zF, f_targ-dz, f_targ+dz, ftf_r, ftf_t, delta)
     prsq, prpt, ptsq = int_pairs(
         r, zF, pR, pT, ftf_r, ftf_t
     )  # phi_r_sq, phi_r_phi_t, phi_t_sq
@@ -181,14 +181,14 @@ plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr, i)
-plot_mirror_comp_each(path, r, w0, zm_t, mr)
 # plot_mirror_all(path, r, w0, mr)
 
 plot_zernikes(path, zern, rmax, f_targ, n)
 plot_mirror_comp(path, r, w0, zm_t, mr, i, conic)
 plot_mirror_be_af(path, r, w0, mr)
 pplots = time.time()
-print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
+# print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
+plot_mirror_comp_each(path, r, w0, zm_t, mr)
 
 # Plotting each iteration phi_r and phi_t, the gradient and the source
 plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
@@ -207,14 +207,14 @@ print("G Time:" + str(timedelta(seconds=pdzt - proat)))
 plot_mirror_comp_each(path, r, w0, zm_t, mr)
 
 
-# plot_s(path, src, zF, f_targ)
-# ps = time.time()
-# print("S Time:" + str(timedelta(seconds=ps - pdzt)))
+# # plot_s(path, src, zF, f_targ)
+# # ps = time.time()
+# # print("S Time:" + str(timedelta(seconds=ps - pdzt)))
 
 pend = time.time()
 
 print("Total Time:" + str(timedelta(seconds=pend - pstart)))
 
-# add to time.txt the time it took to plot
+##add to time.txt the time it took to plot
 with open(path + "/time.txt", "a") as file:
-    file.write("\nPlotting Time:" + str(timedelta(seconds=pend - pstart)))
+   file.write("\nPlotting Time:" + str(timedelta(seconds=pend - pstart)))

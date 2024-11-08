@@ -22,18 +22,16 @@ def create_starting_optic(r, R, k=-1):
 
 def calc_Z(rho, n):
     # pols = np.array(
-    #     [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1), np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1)]
+    #     [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1), np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1)]  
     # )
 
     zern_pols = np.array(
-        [
-            np.ones_like(rho),
-            np.sqrt(3) * (2 * rho**2 - 1),
-            np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1),
-            np.sqrt(7) * (20 * rho**6 - 30 * rho**4 + 12 * rho**2 - 1),
-        ]
+        [np.ones_like(rho), 
+         np.sqrt(3) * (2 * rho**2 - 1), 
+         np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1), 
+         np.sqrt(7)*(20*rho**6 - 30*rho**4 + 12*rho**2 - 1)]  
     )
-    pols = zern_pols[:n]
+    pols=zern_pols[:n]
     return np.column_stack(pols)
 
 
@@ -43,8 +41,8 @@ def calc_Z_plus(Z):
 
 
 def create_initial_coeff(rmax, R, n):
-    zern_coeff = rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0, 0])
-    coeff = zern_coeff[:n]
+    zern_coeff=rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0, 0])
+    coeff=zern_coeff[:n]                                            
     return coeff
 
 
@@ -173,7 +171,9 @@ def w_z(z, zi, zf, sg=False, order=2):
 
 def integrate(r, z, phi1, phi2, method=simpson):
     return (
-        2 * np.pi * method(method(np.abs(phi1) * np.abs(phi2) * r[:, np.newaxis], z), r)
+        2
+        * np.pi
+        * method(method(np.abs(phi1) * np.abs(phi2) * r[:, np.newaxis], z), r)
     )
 
 
