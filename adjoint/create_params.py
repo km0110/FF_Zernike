@@ -15,23 +15,24 @@ if len(sys.argv) != 2:
 # Lens parameters
 params = {
     "f_targ": 0.5,
-    "f_init": 0.5,
+    "f_init": [0.5, 0.6],
     "ell": 0,
     "wl": 1e-6,
     "f_num": 20,
     "conic": -1,
     "nr": 2000,
     "r_maxf": 1.3,
-    "nzf": 1001,
-    "dz": [5e-2,10e-2],
+    "nzf": 501,
+    "dz": 5e-2,
     "steps": 10000,
     "lr": 1e-11,
     "delta": 1,
     "tol": 1e-12,
     "sg": 0,
     "order": 0,
-    "n": 4,
-    "L": [20e-2,30e-2],
+    "n": [3, 4],
+    "L": 10e-2,
+    "skip": 50,
 }
 
 

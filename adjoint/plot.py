@@ -15,40 +15,10 @@ plt.rcParams["figure.figsize"] = (16, 9)
 plt.rcParams["lines.linewidth"] = 3
 
 
-# In[26]:
-
-
-def spikes(mirror):
-    ddfmr = np.diff(mirror, n=2)
-    spikes = np.where(ddfmr < -4.5e-7)[0] + 1
-    return spikes
-
-
-# In[27]:
-
-
-def shift(mirror, spikes):
-    new_mir = np.copy(mirror)
-    n = len(spikes)  # number of shifts
-    spikes = np.append(spikes, len(mirror))
-    for i in range(n):
-        start = spikes[i]
-        end = spikes[i + 1]
-        new_mir[start:end] -= (i + 1) * 5e-7
-    return new_mir
-
-
-# # Total Change in mirror
-
-# In[2]:
-
-
 def plot_total_change(path, r, w0, gr, lr, wl, steps, n, xlim=(0, 2), spikes=None):
     Z_fit = calc_Z(r / np.max(r), n)
     norm_r = r / w0
     dfda = Z_fit @ gr.T
-    print(np.shape(dfda))
-    print(np.shape(np.sum(dfda, axis=1)))
     plt.scatter(
         norm_r, -1 * np.sum(dfda, axis=1) * lr / wl, label="After %d Steps" % (steps)
     )
@@ -155,29 +125,29 @@ def plot_mirror_comp(path, r, w0, z_m, mr, xlim=(0, 2), ylim=(0, 3e-5)):
 
 
 # plot mirror at each step and compare to target and save to file
-def plot_mirror_comp_each(path, r, w0, zm_t, mr, xlim=(0, 2), ylim=(0, 3e-5)):
+def plot_mirror_comp_each(path, r, w0, zm_t, mr, steps, xlim=(0, 2), ylim=(0, 3e-5)):
     norm_r = r / w0
 
     for i, ref in enumerate(mr):
-        if i % 50 == 0:
+        if i % steps == 0:
             print("Mirror step: %d" % i)
-        plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.plot(norm_r, zm_t, label="Target Mirror")
-        plt.plot(norm_r, ref, label="Mirror at step %d" % i)
-        # keep xlim and ylim across all plots by setting it based on min and max x and y values in mr
-        if max(norm_r) > 2:
-            plt.xlim(xlim)
-            plt.ylim(ylim)
-        else:
-            plt.xlim(xmin=0)
-            plt.ylim(ymin=0)
-        plt.legend()
-        plt.xlabel(r"$r/w_0$")
-        plt.ylabel("z (m)")
-        plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
-        plt.tight_layout()
-        plt.savefig(path + "/mirror/mirror_comp_%d" % i, dpi=100)
-        plt.close()
+            plt.figure(figsize=(11.52, 6.56), dpi=100)
+            plt.plot(norm_r, zm_t, label="Target Mirror")
+            plt.plot(norm_r, ref, label="Mirror at step %d" % i)
+            # keep xlim and ylim across all plots by setting it based on min and max x and y values in mr
+            if max(norm_r) > 2:
+                plt.xlim(xlim)
+                plt.ylim(ylim)
+            else:
+                plt.xlim(xmin=0)
+                plt.ylim(ymin=0)
+            plt.legend()
+            plt.xlabel(r"$r/w_0$")
+            plt.ylabel("z (m)")
+            plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
+            plt.tight_layout()
+            plt.savefig(path + "/mirror/mirror_comp_%d" % i, dpi=100)
+            plt.close()
 
 
 # plot all of the mirror steps on one plot
@@ -211,7 +181,7 @@ def plot_zernikes(path, zern, rmax, f_targ, n):
     plt.ylabel("Coefficient")
 
     # ideal coefficients for the target mirror
-    zm_t = create_initial_coeff(rmax, 2 * f_targ, n)
+    # zm_t = create_initial_coeff(rmax, 2 * f_targ, n)
 
     # create horizontal lines for each y value in zm_t
     # for i, z in enumerate(zm_t):
@@ -229,89 +199,62 @@ def plot_zernikes(path, zern, rmax, f_targ, n):
     plt.close()
 
 
-# In[10]:
-
-
-# back when the mirror was more discrete
-def plot_mirror_be_af(path, r, w0, mr, xlim=(0, 2), ylim=(0, 3e-5)):
-    plt.plot(r / w0, mr[-1], label="Before shift", linewidth=3)
-    sp = spikes(mr[-1])
-    smr = shift(mr[-1], sp)
-    plt.plot(r / w0, smr, label="After shift", linestyle="--", linewidth=3)
-
-    plt.xlim(xmin=0)
-    plt.ylim(ylim)
-    plt.legend()
-    plt.xlabel(r"$r/w_0$")
-    plt.ylabel("z (m)")
-    plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
-
-    sp = spikes(mr[-1])
-    for s in r[sp]:
-        plt.axvline(s / w0, linestyle="--", c="k", linewidth=2)
-
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig(path + "/mirror_be_af")
-    plt.close()
-
-
-def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl):
+def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, steps):
     for i, ref in enumerate(phr_f):
-        if i % 50 == 0:
+        if i % steps == 0:
             print("PRPT_F step: %d" % i)
-        # plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.plot(r / w0, np.real(ftf_t[:, fl]), label=r"$\phi_T(z=f)$")
+            # plt.figure(figsize=(11.52, 6.56), dpi=100)
+            plt.plot(r / w0, np.real(ftf_t[:, fl]), label=r"$\phi_T(z=f)$")
 
-        plt.plot(r / w0, np.real(ref), label=r"$\phi_R(z=f)$")
-        plt.title("Step: %d" % i)
-        plt.xlim((0, 1))
-        plt.ylabel(r"$\phi$")
-        plt.xlabel(r"$r/w_0$")
-        plt.legend()
-        #     plt.show()
-        plt.tight_layout()
-        plt.savefig(path + "/phr_f/phr_f_%d" % i, dpi=100)
-        plt.close()
+            plt.plot(r / w0, np.real(ref), label=r"$\phi_R(z=f)$")
+            plt.title("Step: %d" % i)
+            plt.xlim((0, 1))
+            plt.ylabel(r"$\phi$")
+            plt.xlabel(r"$r/w_0$")
+            plt.legend()
+            #     plt.show()
+            plt.tight_layout()
+            plt.savefig(path + "/phr_f/phr_f_%d" % i, dpi=100)
+            plt.close()
 
 
 # In[6]:
 
 
-def plot_phi_t_phi_r_OA_I(path, phr_oa, z, f, ftf_t):
+def plot_phi_t_phi_r_OA_I(path, phr_oa, z, f, ftf_t, steps):
     for i, ref in enumerate(phr_oa):
-        if i % 50 == 0:
+        if i % steps == 0:
             print("PRPT_OA step: %d" % i)
-        # plt.figure(figsize=(16, 6.56), dpi=100)
-        plt.plot((z - f) * 100, np.abs(ftf_t[0, :] ** 2), label=r"$\phi_T$")
+            # plt.figure(figsize=(16, 6.56), dpi=100)
+            plt.plot((z - f) * 100, np.abs(ftf_t[0, :] ** 2), label=r"$\phi_T$")
 
-        plt.plot((z - f) * 100, np.abs(ref**2), label=r"$\phi_R$")
-        plt.title("Step: %d" % i)
-        plt.ylabel("On-axis Intensity")
-        plt.xlabel(r"$z-f$ (cm)")
-        plt.legend()
-        #     plt.show()
-        plt.tight_layout()
-        plt.savefig(path + "/pr_oa_I/pr_oa_I_%d" % i, dpi=100)
-        plt.close()
+            plt.plot((z - f) * 100, np.abs(ref**2), label=r"$\phi_R$")
+            plt.title("Step: %d" % i)
+            plt.ylabel("On-axis Intensity")
+            plt.xlabel(r"$z-f$ (cm)")
+            plt.legend()
+            #     plt.show()
+            plt.tight_layout()
+            plt.savefig(path + "/pr_oa_I/pr_oa_I_%d" % i, dpi=100)
+            plt.close()
 
 
-def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
+def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t, steps):
     for i, ref in enumerate(phr_oa):
-        if i % 50 == 0:
+        if i % steps == 0:
             print("PRPT_OA step: %d" % i)
-        # plt.figure(figsize=(16, 6.56), dpi=100)
-        plt.plot((z - f) * 100, np.real(ftf_t[0, :]), label=r"$\phi_T$")
+            # plt.figure(figsize=(16, 6.56), dpi=100)
+            plt.plot((z - f) * 100, np.real(ftf_t[0, :]), label=r"$\phi_T$")
 
-        plt.plot((z - f) * 100, np.real(ref), label=r"$\phi_R$")
-        plt.title("Step: %d" % i)
-        plt.ylabel("On-axis Amplitude")
-        plt.xlabel(r"$z-f$ (cm)")
-        plt.legend()
-        #     plt.show()
-        plt.tight_layout()
-        plt.savefig(path + "/pr_oa/pr_oa_%d" % i, dpi=100)
-        plt.close()
+            plt.plot((z - f) * 100, np.real(ref), label=r"$\phi_R$")
+            plt.title("Step: %d" % i)
+            plt.ylabel("On-axis Amplitude")
+            plt.xlabel(r"$z-f$ (cm)")
+            plt.legend()
+            #     plt.show()
+            plt.tight_layout()
+            plt.savefig(path + "/pr_oa/pr_oa_%d" % i, dpi=100)
+            plt.close()
 
 
 # # Show each step size
@@ -319,46 +262,46 @@ def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t):
 # In[37]:
 
 
-def plot_da_vs_grad(path, gr, r, w0, zern, n):
+def plot_da_vs_grad(path, gr, r, w0, zern, n, skip):
     i = 0
     Z_fit = calc_Z(r / np.max(r), n)
     dfda = Z_fit @ zern.T
     norm_r = r / w0
     for dzm, da in zip(gr, dfda.T):
-        if i % 50 == 0:
+        if i % skip == 0:
             print("G step: %d" % i)
-        # plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.scatter(r / w0, dzm, label="df/dz")
-        plt.scatter(r / w0, da, label="Zernike Fit on df/dz")
-        # plt.plot(r,np.real(ref),label='real')
-        plt.title("Step: %d" % i)
-        plt.ylabel(r"$\delta z/\lambda$ ")
-        plt.xlabel(r"$r/w_0$")
-        plt.axhline(0, linestyle="--", c="k")
-        if max(norm_r) > 2:
-            plt.xlim((0, 2))
-        else:
-            plt.xlim(xmin=0)
-        # plt.ylim((np.min(zern) / wl, np.max(zern) / wl))
-        #     plt.show()
-        plt.legend()
-        plt.tight_layout()
-        plt.savefig(path + "/g/g_%d" % (i), dpi=100)
+            # plt.figure(figsize=(11.52, 6.56), dpi=100)
+            plt.scatter(r / w0, dzm, label="df/dz")
+            plt.scatter(r / w0, da, label="Zernike Fit on df/dz")
+            # plt.plot(r,np.real(ref),label='real')
+            plt.title("Step: %d" % i)
+            plt.ylabel(r"$\delta z/\lambda$ ")
+            plt.xlabel(r"$r/w_0$")
+            plt.axhline(0, linestyle="--", c="k")
+            if max(norm_r) > 2:
+                plt.xlim((0, 2))
+            else:
+                plt.xlim(xmin=0)
+            # plt.ylim((np.min(zern) / wl, np.max(zern) / wl))
+            #     plt.show()
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(path + "/g/g_%d" % (i), dpi=100)
 
-        plt.close()
+            plt.close()
         i += 1
 
 
-def plot_s(path, s, z, f):
-    for i, ref in enumerate(s):
-        if i % 50 == 0:
-            print("S step: %d" % i)
-        # plt.figure(figsize=(11.52, 6.56), dpi=100)
-        plt.plot(z / f, np.real(ref))
-        plt.title("Step: %d" % i)
-        plt.ylabel(r"$S=\phi_R-\mu\phi_T$")
-        plt.xlabel(r"$z/f$")
-        #     plt.show()
-        plt.tight_layout()
-        plt.savefig(path + "/s/s_%d" % i, dpi=100)
-        plt.close()
+def plot_psi(path, psi, r, w0, steps):
+    for i, ref in enumerate(psi):
+        if i % steps == 0:
+            print("Psi step: %d" % i)
+            # plt.figure(figsize=(11.52, 6.56), dpi=100)
+            plt.plot(r / w0, np.real(ref))
+            plt.title("Step: %d" % i)
+            plt.ylabel(r"$\psi$")
+            plt.xlabel(r"$r/w_0$")
+            #     plt.show()
+            plt.tight_layout()
+            plt.savefig(path + "/psi/psi_%d" % i, dpi=100)
+            plt.close()

@@ -15,62 +15,27 @@ plt.rcParams["figure.figsize"] = (16, 9)
 plt.rcParams["lines.linewidth"] = 3
 
 
-# In[26]:
-
-
-def spikes(mirror):
-    ddfmr = np.diff(mirror, n=2)
-    spikes = np.where(ddfmr < -4.5e-7)[0] + 1
-    return spikes
-
-
-# In[27]:
-
-
-def shift(mirror, spikes):
-    new_mir = np.copy(mirror)
-    n = len(spikes)  # number of shifts
-    spikes = np.append(spikes, len(mirror))
-    for i in range(n):
-        start = spikes[i]
-        end = spikes[i + 1]
-        new_mir[start:end] -= (i + 1) * 5e-7
-    return new_mir
-
-
-# # Total Change in mirror
-
-# In[2]:
-
-
-def plot_total_change(path, r, w0, gr, lr, wl, steps, n, xlim=(0, 2), spikes=None):
-    Z_fit = calc_Z(r / np.max(r), n)
-    norm_r = r / w0
+def plot_total_change(path, norm_r, gr, lr, wl, steps, n, xlim=(0, 2), spikes=None):
+    Z_fit = calc_Z(norm_r, n)
     dfda = Z_fit @ gr.T
     print(np.shape(dfda))
     print(np.shape(np.sum(dfda, axis=1)))
     plt.scatter(
         norm_r, -1 * np.sum(dfda, axis=1) * lr / wl, label="After %d Steps" % (steps)
     )
-    # plt.xlim((0,2*w0))
     plt.title("Total change in the mirror")
     plt.xlabel(r"$r/w_0$")
     plt.ylabel(r"$\sum\delta z/\lambda$")
     plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
-    # plt.axvline(w0,label='$w_0$',linestyle='--',c='k')
     plt.axhline(0, c="k", linewidth=1)
     if max(norm_r) > 2:
         plt.xlim(xlim)
     else:
         plt.xlim(xmin=0)
-    if spikes != None:
-        for s in r[spikes]:
-            plt.axvline(s / w0, linestyle="--", c="k", linewidth=2)
     plt.legend()
     plt.tight_layout()
     plt.savefig(path + "/total_change")
     plt.close()
-    # plt.savefig('f-0_01_total_change_%d_steps_full'%(i))
 
 
 # In[3]:

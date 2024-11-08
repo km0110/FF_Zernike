@@ -28,7 +28,7 @@ path = path.split("/")[0] + "/runs/real_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-subdir = ["phr_f", "pr_oa", "pr_oa_I", "g", "s", "mirror"]
+subdir = ["phr_f", "pr_oa", "pr_oa_I", "g", "psi", "mirror"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
@@ -66,6 +66,7 @@ lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
 n = params["n"]
+skip = params["skip"]
 ################################################
 print(w0)
 # Hankel
@@ -73,7 +74,7 @@ print(w0)
 [T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
 
 # Initial propagation
-phi_I = 1j * np.exp(-((r / w0) ** 16))
+phi_I = 1j * np.exp(-((r / w0) ** 40))
 zm_t = create_axiparabola(r, w0, L, f_targ)  # target mirror
 ftf_t = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
@@ -116,7 +117,7 @@ while change > tol and i < steps:
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    pR, pT = weighted_phi(r, wR, zF, f_targ-dz, f_targ+dz, ftf_r, ftf_t, delta)
+    pR, pT = weighted_phi(r, wR, zF, f_targ - dz, f_targ + L + dz, ftf_r, ftf_t, delta)
     prsq, prpt, ptsq = int_pairs(
         r, zF, pR, pT, ftf_r, ftf_t
     )  # phi_r_sq, phi_r_phi_t, phi_t_sq
@@ -127,7 +128,6 @@ while change > tol and i < steps:
     s_hat = T_R2K @ s
     psi_hat = calc_psi_hat(k, k0, zF, s_hat)
     psi = T_K2R @ psi_hat
-
     # Calculating the gradient and updating the mirror
     dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
     # dfda = dfdz @ Z_fit
@@ -139,7 +139,7 @@ while change > tol and i < steps:
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda])
+    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(psi), dfda])
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
@@ -165,14 +165,14 @@ with open(path + "/time.txt", "w") as file:
 
 ################################################
 # create plots
-phr_oa, phr_f, gr, mr, src, zern = [np.genfromtxt(f, delimiter=",") for f in filenames]
+phr_oa, phr_f, gr, mr, psis, zern = [np.genfromtxt(f, delimiter=",") for f in filenames]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
 figom = FOM(pr2, rt, pt2)
 mu_val = calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
-# Plotting overall change
+print("psi:", psis.shape)
 plot_total_change(path, r, w0, zern, lr, wl, i, n)
 print("1")
 plot_max_grad(path, gr)
@@ -181,35 +181,31 @@ plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr, i)
-# plot_mirror_all(path, r, w0, mr)
-
 plot_zernikes(path, zern, rmax, f_targ, n)
-plot_mirror_comp(path, r, w0, zm_t, mr, i, conic)
-plot_mirror_be_af(path, r, w0, mr)
+
 pplots = time.time()
 # print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
-plot_mirror_comp_each(path, r, w0, zm_t, mr)
+plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
 # Plotting each iteration phi_r and phi_t, the gradient and the source
-plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
+plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
 prft = time.time()
 print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
+plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t)
+plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
 
-plot_da_vs_grad(path, gr, r, w0, zern, n)
+plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
 pdzt = time.time()
 print("G Time:" + str(timedelta(seconds=pdzt - proat)))
-plot_mirror_comp_each(path, r, w0, zm_t, mr)
 
 
-# # plot_s(path, src, zF, f_targ)
-# # ps = time.time()
-# # print("S Time:" + str(timedelta(seconds=ps - pdzt)))
+plot_psi(path, psis, r, w0, skip)
+ps = time.time()
+print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
 
 pend = time.time()
 
@@ -217,4 +213,4 @@ print("Total Time:" + str(timedelta(seconds=pend - pstart)))
 
 ##add to time.txt the time it took to plot
 with open(path + "/time.txt", "a") as file:
-   file.write("\nPlotting Time:" + str(timedelta(seconds=pend - pstart)))
+    file.write("\nPlotting Time:" + str(timedelta(seconds=pend - pstart)))
