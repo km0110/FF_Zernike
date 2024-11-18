@@ -67,6 +67,7 @@ tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
 n = params["n"]
 skip = params["skip"]
+stop = params["stop"]
 ################################################
 print(w0)
 # Hankel
@@ -110,6 +111,7 @@ change = 1000
 i = 0
 start_time = time.time()
 data = []
+break_flag = False
 while change > tol and i < steps:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
@@ -144,11 +146,16 @@ while change > tol and i < steps:
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
     i += 1
+    mu = calc_mu(prpt, ptsq)
+    if i > stop and mu < 0.5:
+        break_flag = True
+        break
+
 fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
 final_time = time.time()
 
-if i < steps:
+if i < steps and not break_flag:
     output = "Algorithm converged in %d steps \nTotal Time:" % (i) + str(
         timedelta(seconds=final_time - start_time)
     )
