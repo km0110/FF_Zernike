@@ -184,12 +184,12 @@ print("2")
 plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
-plot_mirror_comp(path, r, w0, zm_t, mr, i)
+# plot_mirror_comp(path, r, w0, zm_t, mr, i)
 plot_zernikes(path, zern, rmax, f_targ, n)
 
 pplots = time.time()
 # print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
-plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
+# plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
 # Plotting each iteration phi_r and phi_t, the gradient and the source
 plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
