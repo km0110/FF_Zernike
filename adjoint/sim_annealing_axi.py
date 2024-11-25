@@ -91,7 +91,7 @@ filenames = [path + "/" + s for s in data_names]
 
 # Running the main algorithm loop
 change = 1000
-i = 0
+i = 1
 start_time = time.time()
 data = []
 
