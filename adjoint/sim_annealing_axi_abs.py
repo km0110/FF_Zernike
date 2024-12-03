@@ -238,15 +238,15 @@ pplots = time.time()
 plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
 # Plotting each iteration phi_r and phi_t, the gradient and the source
-plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
+plot_phi_t_phi_r_f(path, phr_f, r, w0, np.abs(ftf_t), fl, skip)
 prft = time.time()
 print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
+plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, np.abs(ftf_t), skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
+plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, np.abs(ftf_t), skip)
 
 plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
 pdzt = time.time()

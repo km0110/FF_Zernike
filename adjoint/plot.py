@@ -204,9 +204,9 @@ def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, steps):
         if i % steps == 0:
             print("PRPT_F step: %d" % i)
             # plt.figure(figsize=(11.52, 6.56), dpi=100)
-            plt.plot(r / w0, np.real(ftf_t[:, fl]), label=r"$\phi_T(z=f)$")
+            plt.plot(r / w0, ftf_t[:, fl], label=r"$\phi_T(z=f)$")
 
-            plt.plot(r / w0, np.real(ref), label=r"$\phi_R(z=f)$")
+            plt.plot(r / w0, ref, label=r"$\phi_R(z=f)$")
             plt.title("Step: %d" % i)
             plt.xlim((0, 1))
             plt.ylabel(r"$\phi$")
@@ -244,9 +244,9 @@ def plot_phi_t_phi_r_OA(path, phr_oa, z, f, ftf_t, steps):
         if i % steps == 0:
             print("PRPT_OA step: %d" % i)
             # plt.figure(figsize=(16, 6.56), dpi=100)
-            plt.plot((z - f) * 100, np.real(ftf_t[0, :]), label=r"$\phi_T$")
+            plt.plot((z - f) * 100, ftf_t[0, :], label=r"$\phi_T$")
 
-            plt.plot((z - f) * 100, np.real(ref), label=r"$\phi_R$")
+            plt.plot((z - f) * 100, ref, label=r"$\phi_R$")
             plt.title("Step: %d" % i)
             plt.ylabel("On-axis Amplitude")
             plt.xlabel(r"$z-f$ (cm)")
