@@ -128,8 +128,7 @@ del_improv = lr / 10
 del_stag = lr / 100
 break_flag = False
 while change > tol and i <= steps:
-    if i % skip == 0:
-        print("MAIN STEP %d \t Grad:%.3e" % (i, change))
+    print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Calculating S and psi
     s = S(curr_pR, curr_pT, curr_prpt, curr_ptsq)
     s_hat = T_R2K @ s
