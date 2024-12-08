@@ -130,8 +130,6 @@ break_flag = False
 while change > tol and i <= steps:
     if i % skip == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
-    # Forward propagation
-    print(i)
     # Calculating S and psi
     s = S(curr_pR, curr_pT, curr_prpt, curr_ptsq)
     s_hat = T_R2K @ s
