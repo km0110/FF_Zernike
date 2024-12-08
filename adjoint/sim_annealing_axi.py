@@ -81,6 +81,7 @@ print(w0)
 
 data_names = [
     "phi_r_OA.csv",
+    "phi_r_OA_abs.csv",
     "phi_r_focus.csv",
     "gradient.csv",
     "mirror.csv",
@@ -126,11 +127,11 @@ data.append(np.real([curr_prsq, curr_prpt, curr_ptsq]))
 del_improv = lr / 10
 del_stag = lr / 100
 break_flag = False
-while change > tol and i < steps:
-    if i % 1 == 0:
+while change > tol and i <= steps:
+    if i % skip == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Forward propagation
-
+    print(i)
     # Calculating S and psi
     s = S(curr_pR, curr_pT, curr_prpt, curr_ptsq)
     s_hat = T_R2K @ s
@@ -142,6 +143,15 @@ while change > tol and i < steps:
     # dfda = dfdz @ Z_fit
     dfda = Z_plus @ dfdz
     Z_plus = calc_Z_plus(Z_fit)
+
+    # Writing to files
+    phi_r_oa = np.real(curr_ftf_r[0, :])
+    phi_r_oa_abs = np.abs(curr_ftf_r[0, :])
+    phi_r_f = np.real(curr_ftf_r[:, fl])
+    write_to_files(
+        filenames,
+        [phi_r_oa, phi_r_oa_abs, phi_r_f, dfdz, curr_zm_r, np.real(psi), dfda],
+    )
 
     # calculate the candidate mirror and the FOM score for it
     cand_a_n = step(dfda, np.random.random() * lr, curr_a_n)
@@ -189,10 +199,14 @@ while change > tol and i < steps:
         break_flag = True
         break
 
-    # Writing to files
-    phi_r_oa = np.real(curr_ftf_r[0, :])
-    phi_r_f = np.real(curr_ftf_r[:, fl])
-    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, curr_zm_r, np.real(psi), dfda])
+    # # Writing to files
+    # phi_r_oa = np.real(curr_ftf_r[0, :])
+    # phi_r_oa_abs = np.abs(curr_ftf_r[0, :])
+    # phi_r_f = np.real(curr_ftf_r[:, fl])
+    # write_to_files(
+    #     filenames,
+    #     [phi_r_oa, phi_r_oa_abs, phi_r_f, dfdz, curr_zm_r, np.real(psi), dfda],
+    # )
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
@@ -215,7 +229,9 @@ with open(path + "/time.txt", "w") as file:
 
 ################################################
 # create plots
-phr_oa, phr_f, gr, mr, psis, zern = [np.genfromtxt(f, delimiter=",") for f in filenames]
+phr_oa, phr_oa_abs, phr_f, gr, mr, psis, zern = [
+    np.genfromtxt(f, delimiter=",") for f in filenames
+]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
 figom = FOM(pr2, rt, pt2)
 mu_val = calc_mu(rt, pt2)
@@ -238,15 +254,15 @@ pplots = time.time()
 plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
 # Plotting each iteration phi_r and phi_t, the gradient and the source
-plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
+plot_phi_t_phi_r_f(path, phr_f, r, w0, np.real(ftf_t), fl, skip)
 prft = time.time()
 print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
+plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, np.real(ftf_t), skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
+plot_phi_t_phi_r_OA_I(path, phr_oa_abs, zF, f_targ, np.abs(ftf_t), skip)
 
 plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
 pdzt = time.time()
