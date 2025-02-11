@@ -15,6 +15,28 @@ def create_axiparabola(r, R, L, f0, taylor=False):
         sag = R**2 / (4 * L) * np.log(1 + L / f0 * (r / R) ** 2)
     return sag
 
+# def read_last_line_as_numpy(file_path, delimiter=",", dtype=None):
+#     """
+#     Efficiently reads the last line of a large CSV file and returns it as a NumPy array.
+
+#     :param file_path: Path to the CSV file.
+#     :param delimiter: Delimiter used in the CSV file (default is ",").
+#     :param dtype: Data type for NumPy array (default is None, letting NumPy infer types).
+#     :return: NumPy array containing the last row.
+#     """
+#     with open(file_path, "rb") as f:
+#         f.seek(0, 2)  # Move to the end of the file
+#         position = f.tell()
+        
+#         while position > 0:
+#             position -= 1
+#             f.seek(position)
+#             if f.read(1) == b"\n":  # Found the last newline
+#                 break
+        
+#         last_line = f.readline().decode().strip()  # Read and strip the last line
+    
+#     return np.genfromtxt([last_line], delimiter=delimiter, dtype=dtype, encoding=None)
 
 if len(sys.argv) != 4:
     print(
@@ -24,10 +46,9 @@ if len(sys.argv) != 4:
 
 # Create the directory for the run
 original_path = sys.argv[1]
-param_file = (original_path.split("/")[-2])[5:] + ".txt"
-print(param_file)
-params = initialize_variables_from_file(original_path + param_file)
-dirname = original_path.split("/")[-2]
+param_file = (original_path.split("/")[-1])[5:] + ".txt"
+params = initialize_variables_from_file(original_path + "/" + param_file)
+dirname = original_path.split("/")[-1]
 path = original_path.split("/")[0] + "/runs/" + dirname + "_cont_1"
 if os.path.exists(path):
     shutil.rmtree(path)
@@ -101,9 +122,9 @@ Z_fit = calc_Z(rho, n)
 Z_plus = calc_Z_plus(Z_fit)
 
 # take the last mirror profile as the initial guess
-
-zm_r = np.genfromtxt(original_path + "mirror.csv", delimiter=",")[-1]
-a_n = np.genfromtxt(original_path + "zernike.csv", delimiter=",")[-1]
+print("genfromtxt")
+zm_r = np.genfromtxt(original_path + "/last_mirror.csv", delimiter=",")
+a_n = Z_plus @ zm_r
 print(len(zm_r))
 # Running the main algorithm loop
 change = 1000
