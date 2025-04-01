@@ -174,6 +174,9 @@ while change > tol and i <= steps:
     t = c * temp / np.log(1 + i)
     if t < floor:
         curr_t = floor
+        # write to text file current iteration
+        with open(path + "/current_iter.txt", "w") as file:
+            file.write("Current Iteration: %d" % i)
     else:
         curr_t = t
     metropolis = np.exp(-diff / curr_t)
