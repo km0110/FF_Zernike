@@ -71,6 +71,7 @@ skip = params["skip"]
 stop = params["stop"]
 temp = params["temp"]
 c = params["c"]
+floor = params["floor"]
 
 ################################################
 print(w0)
@@ -171,7 +172,11 @@ while change > tol and i <= steps:
 
     diff = cand_fom - curr_fom
     t = c * temp / np.log(1 + i)
-    metropolis = np.exp(-diff / t)
+    if t < floor:
+        curr_t = floor
+    else:
+        curr_t = t
+    metropolis = np.exp(-diff / curr_t)
     if diff < 0 or np.random.random() < metropolis:
         curr_a_n, curr_fom = cand_a_n, cand_fom
         curr_zm_r = cand_zm_r
