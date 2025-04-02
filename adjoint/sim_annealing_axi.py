@@ -88,6 +88,7 @@ data_names = [
     "mirror.csv",
     "source.csv",
     "zernike.csv",
+    "lr.csv",
 ]
 filenames = [path + "/" + s for s in data_names]
 
@@ -146,10 +147,6 @@ while change > tol and i <= steps:
     phi_r_oa = np.real(curr_ftf_r[0, :])
     phi_r_oa_abs = np.abs(curr_ftf_r[0, :])
     phi_r_f = np.real(curr_ftf_r[:, fl])
-    write_to_files(
-        filenames,
-        [phi_r_oa, phi_r_oa_abs, phi_r_f, dfdz, curr_zm_r, np.real(psi), dfda],
-    )
 
     # calculate the candidate mirror and the FOM score for it
     cand_a_n = step(dfda, np.random.random() * lr, curr_a_n)
@@ -175,10 +172,14 @@ while change > tol and i <= steps:
     if t < floor:
         curr_t = floor
         # write to text file current iteration
-        with open(path + "/current_iter.txt", "w") as file:
-            file.write("Current Iteration: %d" % i)
     else:
         curr_t = t
+
+    write_to_files(
+        filenames,
+        [phi_r_oa, phi_r_oa_abs, phi_r_f, dfdz, curr_zm_r, np.real(psi), dfda, curr_t],
+    )
+
     metropolis = np.exp(-diff / curr_t)
     if diff < 0 or np.random.random() < metropolis:
         curr_a_n, curr_fom = cand_a_n, cand_fom
