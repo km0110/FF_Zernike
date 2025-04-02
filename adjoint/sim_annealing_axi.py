@@ -88,7 +88,6 @@ data_names = [
     "mirror.csv",
     "source.csv",
     "zernike.csv",
-    "lr.csv",
 ]
 filenames = [path + "/" + s for s in data_names]
 
@@ -129,6 +128,7 @@ data.append(np.real([curr_prsq, curr_prpt, curr_ptsq]))
 del_improv = lr / 10
 del_stag = lr / 100
 break_flag = False
+lrtxt = []
 while change > tol and i <= steps:
     print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Calculating S and psi
@@ -177,8 +177,10 @@ while change > tol and i <= steps:
 
     write_to_files(
         filenames,
-        [phi_r_oa, phi_r_oa_abs, phi_r_f, dfdz, curr_zm_r, np.real(psi), dfda, curr_t],
+        [phi_r_oa, phi_r_oa_abs, phi_r_f, dfdz, curr_zm_r, np.real(psi), dfda],
     )
+
+    lrtxt.append(curr_t)
 
     metropolis = np.exp(-diff / curr_t)
     if diff < 0 or np.random.random() < metropolis:
@@ -217,6 +219,8 @@ while change > tol and i <= steps:
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
 np.savetxt(path + "/data.csv", data, delimiter=",")
+np.savetxt(path + "/lr.csv", lrtxt, delimiter=",")
+
 final_time = time.time()
 if i < steps and not break_flag:
     output = "Algorithm converged in %d steps \nTotal Time:" % (i) + str(
