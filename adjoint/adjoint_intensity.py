@@ -122,9 +122,10 @@ def forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
 
 # In[10]:
 
-def calc_intensity(ftf_r, ftf_t)
-    Ir = np.abs(ftf_r)**2
-    It = np.abs(ftf_t)**2
+
+def calc_intensity(ftf_r, ftf_t):
+    Ir = np.abs(ftf_r) ** 2
+    It = np.abs(ftf_t) ** 2
     return Ir, It
 
 
@@ -176,19 +177,19 @@ def w_z(z, zi, zf, sg=False, order=2):
 # In[14]:
 
 
-def integrate(r, z, int1, int2, method=simpson):
-    return 2 * np.pi * method(method((int1) * (int2) * r[:, np.newaxis], z), r)
+def integrate(r, z, w, int1, int2, method=simpson):
+    return 2 * np.pi * method(method(w * int1 * int2 * r[:, np.newaxis], z), r)
 
 
 # In[15]:
 
 
-# TODO: fix this function
 def weight(r, R, z, zi, zf, delta):
     wz = w_z(z, zi, zf)
     wxp = w_xp(r, R, delta)
     w = wz * wxp[:, np.newaxis]
     return w
+
 
 # In[16]:
 
@@ -217,7 +218,7 @@ def calc_mu(IrIt, Itsq):
 # In[19]:
 
 
-def S(w, Ir, It, IrIt, Itsq):
+def S(w, phi_r, Ir, It, IrIt, Itsq):
     mu = calc_mu(IrIt, Itsq)
     s = w * (Ir - mu * It) * np.real(np.conj(phi_r))
     # s=pr-m*pt
@@ -240,12 +241,12 @@ def calc_psi_hat(k, k0, z, s_hat, method=simpson):
 
 def adjoint(r, wR, k, k0, z, zmin, zmax, phi_r, phi_t, T_R2K, delta):
     # print('pr pt')
-    w = weight(r, w_R, z, zmin, zmax, delta):
+    w = weight(r, wR, z, zmin, zmax, delta)
     # print('int pairs')
-    Ir, It=calc_intensity(phi_r, phi_t)
+    Ir, It = calc_intensity(phi_r, phi_t)
     _, IrIt, Itsq = int_pairs(r, z, w, Ir, It)
     # print('s')
-    s = S(w, Ir, It, IrIt, Itsq) 
+    s = S(w, Ir, It, IrIt, Itsq)
     s_hat = T_R2K @ s
     psi_hat = calc_psi_hat(k, k0, z, s_hat)
     return psi_hat

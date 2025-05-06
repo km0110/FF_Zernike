@@ -15,11 +15,11 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = 'runs/main_'+dirname
+path = path.split("/")[0] + "/runs/real_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-subdir = ["phr_f", "pr_oa", "g", "s", "mirror"]
+subdir = ["phr_f", "pr_oa", "pr_oa_I", "g", "psi", "mirror", "S"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
@@ -53,7 +53,8 @@ steps = params["steps"]  # max number of steps algorithm is allowed
 lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
-n = params['n']
+n = params["n"]
+skip = params["skip"]
 ################################################
 print(w0)
 # Hankel
@@ -67,10 +68,10 @@ ftf_t = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
 )  # Target profile defined using target mirror
 
-a_n = create_initial_coeff(rmax, 2 * f_init,n)
+a_n = create_initial_coeff(rmax, 2 * f_init, n)
 print(a_n)
 rho = r / rmax
-Z_fit = calc_Z(rho,n)
+Z_fit = calc_Z(rho, n)
 Z_plus = calc_Z_plus(Z_fit)
 
 zm_r = generate_optic(a_n, Z_fit)  # initial mirror
@@ -120,7 +121,7 @@ while change > tol and i < steps:
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda])
+    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[:, 0]), dfda])
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
@@ -148,8 +149,7 @@ mu_val = calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
-# Plotting overall change
-plot_total_change(path, r, w0, zern, lr, wl, i, n, xlim=(0, 2))
+plot_total_change(path, r, w0, zern, lr, wl, i, n)
 print("1")
 plot_max_grad(path, gr)
 print("2")
@@ -157,33 +157,40 @@ plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr, i)
-plot_mirror_comp_each(path, r, w0, zm_t, mr)
-# plot_mirror_all(path, r, w0, mr)
-
 plot_zernikes(path, zern, rmax, f_targ, n)
-# plot_mirror_comp(path, r, w0, zm_t, mr, i, conic, do_shift=True)
-# plot_mirror_be_af(path, r, w0, mr)
+
 pplots = time.time()
-print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
+# print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
+plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
 # Plotting each iteration phi_r and phi_t, the gradient and the source
-plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl)
+plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
 prft = time.time()
 print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t)
+plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_da_vs_grad(path, lr, gr, r, w0, wl, zern,n)
+plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
+
+plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
 pdzt = time.time()
 print("G Time:" + str(timedelta(seconds=pdzt - proat)))
-plot_mirror_comp_each(path, r, w0, zm_t, mr)
 
-# plot_s(path, src, zF, f_targ)
+
+# plot_psi(path, psis, r, w0, skip)
 # ps = time.time()
-# print("S Time:" + str(timedelta(seconds=ps - pdzt)))
+# print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
 
+plot_source(path, src, r, w0, skip)
 pend = time.time()
 
 print("Total Time:" + str(timedelta(seconds=pend - pstart)))
+
+##add to time.txt the time it took to plot
+with open(path + "/time.txt", "a") as file:
+    file.write("\nPlotting Time:" + str(timedelta(seconds=pend - pstart)))
+
+# move the parameter file to the run directory
+shutil.move(sys.argv[1], path)
