@@ -212,7 +212,7 @@ print("G Time:" + str(timedelta(seconds=pdzt - proat)))
 # ps = time.time()
 # print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
 
-plot_source(path, src, r, w0, skip)
+plot_source(path, src, zF, f_targ, skip)
 pend = time.time()
 
 print("Total Time:" + str(timedelta(seconds=pend - pstart)))

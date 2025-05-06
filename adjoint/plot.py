@@ -305,3 +305,18 @@ def plot_psi(path, psi, r, w0, steps):
             plt.tight_layout()
             plt.savefig(path + "/psi/psi_%d" % i, dpi=100)
             plt.close()
+
+
+def plot_source(path, S, z, f, steps):
+    for i, ref in enumerate(S):
+        if i % steps == 0:
+            print("S step: %d" % i)
+            # plt.figure(figsize=(11.52, 6.56), dpi=100)
+            plt.plot(z / f, np.real(ref))
+            plt.title("Step: %d" % i)
+            plt.ylabel(r"$S$")
+            plt.xlabel(r"$z/f$")
+            #     plt.show()
+            plt.tight_layout()
+            plt.savefig(path + "/S/S_%d" % i, dpi=100)
+            plt.close()

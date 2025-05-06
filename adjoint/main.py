@@ -121,7 +121,7 @@ while change > tol and i < steps:
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[:, 0]), dfda])
+    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda])
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
@@ -183,7 +183,7 @@ print("G Time:" + str(timedelta(seconds=pdzt - proat)))
 # ps = time.time()
 # print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
 
-plot_source(path, src, r, w0, skip)
+plot_source(path, src, zF, f_targ, skip)
 pend = time.time()
 
 print("Total Time:" + str(timedelta(seconds=pend - pstart)))
