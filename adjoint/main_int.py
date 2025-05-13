@@ -122,8 +122,8 @@ while change > tol and i < steps:
     wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
     Ir, It = calc_intensity(ftf_r, ftf_t)
     maxIt = np.max(It)
-    # Ir = Ir / maxIt
-    # It = It / maxIt
+    Ir = Ir / maxIt
+    It = It / maxIt
     Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
     data.append(np.real([Irsq, IrIt, Itsq]))
 
