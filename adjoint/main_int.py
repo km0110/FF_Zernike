@@ -121,6 +121,9 @@ while change > tol and i < steps:
     # Calculating Integrals for Source
     wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
     Ir, It = calc_intensity(ftf_r, ftf_t)
+    maxIt = np.max(It)
+    # Ir = Ir / maxIt
+    # It = It / maxIt
     Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
     data.append(np.real([Irsq, IrIt, Itsq]))
 
@@ -131,6 +134,7 @@ while change > tol and i < steps:
     psi = T_K2R @ psi_hat
     # Calculating the gradient and updating the mirror
     dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
+    print(dfdz)
     # dfda = dfdz @ Z_fit
     dfda = Z_plus @ dfdz
     Z_plus = calc_Z_plus(Z_fit)
