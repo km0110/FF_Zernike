@@ -142,6 +142,8 @@ else:
         "Algorithm failed to converge in %d steps \nTotal Time:" % (i)
         + str(timedelta(seconds=final_time - start_time))
     )
+with open(path + "/time.txt", "w") as file:
+    file.write(output)
 
 ################################################
 # create plots
