@@ -221,14 +221,14 @@ def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, steps):
 # In[6]:
 
 
-def plot_phi_t_phi_r_OA_I(path, phr_oa, z, f, ftf_t, steps):
-    for i, ref in enumerate(phr_oa):
+def plot_phi_t_phi_r_OA_I(path, ir_oa, z, f, it, steps):
+    for i, ref in enumerate(ir_oa):
         if i % steps == 0:
-            print("PRPT_OA step: %d" % i)
+            print("Int_OA step: %d" % i)
             # plt.figure(figsize=(16, 6.56), dpi=100)
-            plt.plot((z - f) * 100, np.abs(ftf_t[0, :] ** 2), label=r"$\phi_T$")
+            plt.plot((z - f) * 100, it, label=r"$I_T$")
 
-            plt.plot((z - f) * 100, np.abs(ref**2), label=r"$\phi_R$")
+            plt.plot((z - f) * 100, ref, label=r"$I_T$")
             plt.title("Step: %d" % i)
             plt.ylabel("On-axis Intensity")
             plt.xlabel(r"$z-f$ (cm)")

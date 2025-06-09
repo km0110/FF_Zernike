@@ -123,10 +123,9 @@ def forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
 # In[10]:
 
 
-def calc_intensity(ftf_r, ftf_t):
-    Ir = np.abs(ftf_r) ** 2
-    It = np.abs(ftf_t) ** 2
-    return Ir, It
+def calc_intensity(ft):
+    intensity = np.abs(ft) ** 2
+    return intensity
 
 
 def difference(obs, exp):

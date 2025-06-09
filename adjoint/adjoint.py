@@ -22,16 +22,18 @@ def create_starting_optic(r, R, k=-1):
 
 def calc_Z(rho, n):
     # pols = np.array(
-    #     [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1), np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1)]  
+    #     [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1), np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1)]
     # )
 
     zern_pols = np.array(
-        [np.ones_like(rho), 
-         np.sqrt(3) * (2 * rho**2 - 1), 
-         np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1), 
-         np.sqrt(7)*(20*rho**6 - 30*rho**4 + 12*rho**2 - 1)]  
+        [
+            np.ones_like(rho),
+            np.sqrt(3) * (2 * rho**2 - 1),
+            np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1),
+            np.sqrt(7) * (20 * rho**6 - 30 * rho**4 + 12 * rho**2 - 1),
+        ]
     )
-    pols=zern_pols[:n]
+    pols = zern_pols[:n]
     return np.column_stack(pols)
 
 
@@ -41,8 +43,8 @@ def calc_Z_plus(Z):
 
 
 def create_initial_coeff(rmax, R, n):
-    zern_coeff=rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0, 0])
-    coeff=zern_coeff[:n]                                            
+    zern_coeff = rmax**2 / (2 * R) * np.array([0.5, 1 / (2 * np.sqrt(3)), 0, 0])
+    coeff = zern_coeff[:n]
     return coeff
 
 
@@ -79,6 +81,9 @@ def DHTtransformMatrix(N, R, ell):
 
 
 # In[5]:
+def calc_intensity(ft):
+    intensity = np.abs(ft) ** 2
+    return intensity
 
 
 def propagate(fe, k, k0, z, T_R2K, T_K2R):
@@ -167,6 +172,11 @@ def w_z(z, zi, zf, sg=False, order=2):
 
 
 # In[14]:
+def weight(r, R, z, zi, zf, delta):
+    wz = w_z(z, zi, zf)
+    wxp = w_xp(r, R, delta)
+    w = wz * wxp[:, np.newaxis]
+    return w
 
 
 def integrate(r, z, phi1, phi2, method=simpson):
