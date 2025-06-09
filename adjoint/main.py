@@ -67,6 +67,7 @@ zm_t = create_starting_optic(r, 2 * f_targ)  # target mirror
 ftf_t = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
 )  # Target profile defined using target mirror
+It = calc_intensity(ftf_t)
 
 a_n = create_initial_coeff(rmax, 2 * f_init, n)
 print(a_n)
@@ -83,6 +84,7 @@ data_names = [
     "mirror.csv",
     "source.csv",
     "zernike.csv",
+    "intensity.csv",
 ]
 filenames = [path + "/" + s for s in data_names]
 
@@ -121,7 +123,10 @@ while change > tol and i < steps:
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda])
+    Ir = calc_intensity(ftf_r)
+    write_to_files(
+        filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda, Ir[0, :]]
+    )
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
@@ -130,19 +135,26 @@ fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
 final_time = time.time()
 if i < steps:
-    print(
-        "Algorithm converged in %d steps \nTotal Time:" % (i)
-        + str(timedelta(seconds=final_time - start_time))
+    output = "Algorithm converged in %d steps \nTotal Time:" % (i) + str(
+        timedelta(seconds=final_time - start_time)
     )
 else:
-    print(
-        "Algorithm failed to converge in %d steps \nTotal Time:" % (i)
-        + str(timedelta(seconds=final_time - start_time))
+    output = "Algorithm failed to converge in %d steps \nTotal Time:" % (i) + str(
+        timedelta(seconds=final_time - start_time)
     )
+
+print(output)
+
+# write to output file how long it took to run
+with open(path + "/time.txt", "w") as file:
+    file.write(output)
+
 
 ################################################
 # create plots
-phr_oa, phr_f, gr, mr, src, zern = [np.genfromtxt(f, delimiter=",") for f in filenames]
+phr_oa, phr_f, gr, mr, src, zern, ir_oa = [
+    np.genfromtxt(f, delimiter=",") for f in filenames
+]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
 figom = FOM(pr2, rt, pt2)
 mu_val = calc_mu(rt, pt2)
@@ -172,7 +184,7 @@ plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
+plot_phi_t_phi_r_OA_I(path, ir_oa, zF, f_targ, It[0, :], skip)
 
 plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
 pdzt = time.time()

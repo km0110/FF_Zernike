@@ -43,7 +43,7 @@ conic = params["conic"]
 wl = params["wl"]  # wavelength
 k0 = 2 * np.pi / wl  # k=2*pi/wavelength
 fn = params["f_num"]  # f#
-w0 = f_targ / (2 * fn)  # initial spot size
+w0 = f_init / (2 * fn)  # initial spot size
 rmax = params["r_maxf"] * w0  # the max value of r
 nr = params["nr"]  # number of points in r
 zR = np.pi * w0**2 / wl  # Initial rayleigh length
@@ -81,6 +81,8 @@ ftf_t = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
 )  # Target profile defined using target
 
+It = calc_intensity(ftf_t)
+
 # save plot of ftf_t on axis
 # print("Plotting ftf_t")
 # plt.figure(figsize=(11.52, 6.56), dpi=100)
@@ -103,6 +105,7 @@ data_names = [
     "mirror.csv",
     "source.csv",
     "zernike.csv",
+    "intensity.csv",
 ]
 filenames = [path + "/" + s for s in data_names]
 
@@ -120,10 +123,10 @@ while change > tol and i < steps:
 
     # Calculating Integrals for Source
     wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
-    Ir, It = calc_intensity(ftf_r, ftf_t)
-    maxIt = np.max(It)
-    Ir = Ir / maxIt
-    It = It / maxIt
+    Ir = calc_intensity(ftf_r)
+    # maxIt = np.max(It)
+    # Ir = Ir / maxIt
+    # It = It / maxIt
     Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
     data.append(np.real([Irsq, IrIt, Itsq]))
 
@@ -134,7 +137,6 @@ while change > tol and i < steps:
     psi = T_K2R @ psi_hat
     # Calculating the gradient and updating the mirror
     dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
-    print(dfdz)
     # dfda = dfdz @ Z_fit
     dfda = Z_plus @ dfdz
     Z_plus = calc_Z_plus(Z_fit)
@@ -144,7 +146,9 @@ while change > tol and i < steps:
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda])
+    write_to_files(
+        filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda, Ir[0, :]]
+    )
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
@@ -175,7 +179,9 @@ with open(path + "/time.txt", "w") as file:
 
 ################################################
 # create plots
-phr_oa, phr_f, gr, mr, src, zern = [np.genfromtxt(f, delimiter=",") for f in filenames]
+phr_oa, phr_f, gr, mr, src, zern, ir_oa = [
+    np.genfromtxt(f, delimiter=",") for f in filenames
+]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
 figom = FOM(pr2, rt, pt2)
 mu_val = calc_mu(rt, pt2)
@@ -205,7 +211,7 @@ plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
+plot_phi_t_phi_r_OA_I(path, ir_oa, zF, f_targ, It[0, :], skip)
 
 plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
 pdzt = time.time()
