@@ -121,7 +121,7 @@ while change > tol and i < steps:
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
+    wt = weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
     Ir = calc_intensity(ftf_r)
     # maxIt = np.max(It)
     # Ir = Ir / maxIt
