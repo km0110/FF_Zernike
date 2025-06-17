@@ -24,13 +24,16 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = path.split("/")[0] + "/runs/real_" + dirname
+path = path.split("/")[0] + "/runs/int_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-subdir = ["phr_f", "pr_oa", "pr_oa_I", "g", "psi", "mirror", "S"]
+subdir = ["phr_f", "pr_oa", "I_OA", "I_f", "g", "psi", "mirror", "S"]
 for s in subdir:
     os.makedirs(path + "/" + s)
+
+with open(path + "/time.txt", "w") as file:
+    file.write(sys.argv[0])
 
 ################################################
 # Lens parameters
@@ -109,7 +112,8 @@ data_names = [
     "mirror.csv",
     "source.csv",
     "zernike.csv",
-    "intensity.csv",
+    "int_oa.csv",
+    "int_f.csv",
 ]
 filenames = [path + "/" + s for s in data_names]
 
@@ -149,7 +153,8 @@ while change > tol and i < steps:
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
     write_to_files(
-        filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda, Ir[0, :]]
+        filenames,
+        [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda, Ir[0, :], Ir[:, fl]],
     )
 
     # Updating the change to compare against tolerance
@@ -181,7 +186,7 @@ with open(path + "/time.txt", "w") as file:
 
 ################################################
 # create plots
-phr_oa, phr_f, gr, mr, src, zern, ir_oa = [
+phr_oa, phr_f, gr, mr, src, zern, ir_oa, ir_f = [
     np.genfromtxt(f, delimiter=",") for f in filenames
 ]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
@@ -197,7 +202,7 @@ print("2")
 plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
-plot_mirror_comp(path, r, w0, zm_t, mr, i)
+plot_mirror_comp(path, r, w0, zm_t, mr)
 plot_zernikes(path, zern, rmax, f_targ, n)
 
 pplots = time.time()
@@ -213,7 +218,9 @@ plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_phi_t_phi_r_OA_I(path, ir_oa, zF, f_targ, It[0, :], skip)
+plot_I_OA(path, ir_oa, zF, f_targ, It[0, :], skip)
+
+plot_I_f(path, ir_f, r, w0, It[:, fl], skip)
 
 plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
 pdzt = time.time()

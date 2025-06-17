@@ -101,7 +101,7 @@ def plot_max_grad(path, gr):
 # In[8]:
 
 
-def plot_mirror_comp(path, r, w0, z_m, mr, xlim=(0, 2), ylim=(0, 3e-5)):
+def plot_mirror_comp(path, r, w0, z_m, mr):
     norm_r = r / w0
     plt.plot(norm_r, z_m, label="Target Mirror")
     plt.plot(norm_r, mr[0], label="Initial Mirror")
@@ -110,15 +110,16 @@ def plot_mirror_comp(path, r, w0, z_m, mr, xlim=(0, 2), ylim=(0, 3e-5)):
     # me=np.loadtxt('exp_mr.csv')
     # plt.plot(r,me,label='exp',linestyle='--',linewidth=3)
     if max(norm_r) > 2:
-        plt.xlim(xlim)
-        plt.ylim(ylim)
+        plt.xlim((0, 2))
+        plt.ylim((0, 3e-5))
     else:
         plt.xlim(xmin=0)
         plt.ylim(ymin=0)
-    plt.legend()
     plt.xlabel(r"$r/w_0$")
     plt.ylabel("z (m)")
     plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
+    plt.legend()
+
     plt.tight_layout()
     plt.savefig(path + "/mirror_comp.png")
     plt.close()
@@ -158,12 +159,12 @@ def plot_mirror_all(path, r, w0, mr, xlim=(0, 2), ylim=(0, 3e-5)):
         if i % 50 == 0:
             print("Mirror step: %d" % i)
         plt.plot(norm_r, ref, label="Mirror at step %d" % i)
-        if max(norm_r) > 2:
-            plt.xlim(xlim)
-            plt.ylim(ylim)
-        else:
-            plt.xlim(xmin=0)
-            plt.ylim(ymin=0)
+        # if max(norm_r) > 2:
+        #     plt.xlim(xlim)
+        #     plt.ylim(ylim)
+        # else:
+        plt.xlim(xmin=0)
+        plt.ylim(ymin=0)
         plt.legend()
         plt.xlabel(r"$r/w_0$")
         plt.ylabel("z (m)")
@@ -218,24 +219,43 @@ def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, steps):
             plt.close()
 
 
+def plot_I_f(path, ir_f, r, w0, it_f, steps):
+    for i, ref in enumerate(ir_f):
+        if i % steps == 0:
+            print("PRPT_F step: %d" % i)
+            # plt.figure(figsize=(11.52, 6.56), dpi=100)
+            plt.plot(r / w0, it_f, label=r"$I_T(z=f)$")
+
+            plt.plot(r / w0, ref, label=r"$I_R(z=f)$")
+            plt.title("Step: %d" % i)
+            plt.xlim((0, 1))
+            plt.ylabel(r"$\phi$")
+            plt.xlabel(r"$r/w_0$")
+            plt.legend()
+            #     plt.show()
+            plt.tight_layout()
+            plt.savefig(path + "/I_f/I_f_%d" % i, dpi=100)
+            plt.close()
+
+
 # In[6]:
 
 
-def plot_phi_t_phi_r_OA_I(path, ir_oa, z, f, it, steps):
+def plot_I_OA(path, ir_oa, z, f, it, steps):
     for i, ref in enumerate(ir_oa):
         if i % steps == 0:
             print("Int_OA step: %d" % i)
             # plt.figure(figsize=(16, 6.56), dpi=100)
             plt.plot((z - f) * 100, it, label=r"$I_T$")
 
-            plt.plot((z - f) * 100, ref, label=r"$I_T$")
+            plt.plot((z - f) * 100, ref, label=r"$I_R$")
             plt.title("Step: %d" % i)
             plt.ylabel("On-axis Intensity")
             plt.xlabel(r"$z-f$ (cm)")
             plt.legend()
             #     plt.show()
             plt.tight_layout()
-            plt.savefig(path + "/pr_oa_I/pr_oa_I_%d" % i, dpi=100)
+            plt.savefig(path + "/I_OA/I_oa_%d" % i, dpi=100)
             plt.close()
 
 
