@@ -43,6 +43,7 @@ conic = params["conic"]
 wl = params["wl"]  # wavelength
 k0 = 2 * np.pi / wl  # k=2*pi/wavelength
 fn = params["f_num"]  # f#
+# w0 = f_targ / (2 * fn)  # initial spot size
 w0 = f_init / (2 * fn)  # initial spot size
 rmax = params["r_maxf"] * w0  # the max value of r
 nr = params["nr"]  # number of points in r
@@ -82,6 +83,9 @@ ftf_t = forward_propagation(
 )  # Target profile defined using target
 
 It = calc_intensity(ftf_t)
+maxIt = np.max(It)
+
+It = It / maxIt
 
 # save plot of ftf_t on axis
 # print("Plotting ftf_t")
@@ -124,9 +128,7 @@ while change > tol and i < steps:
     # Calculating Integrals for Source
     wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
     Ir = calc_intensity(ftf_r)
-    # maxIt = np.max(It)
-    # Ir = Ir / maxIt
-    # It = It / maxIt
+    Ir = Ir / maxIt
     Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
     data.append(np.real([Irsq, IrIt, Itsq]))
 
