@@ -114,6 +114,7 @@ data_names = [
     "zernike.csv",
     "int_oa.csv",
     "int_f.csv",
+    "psi.csv",
 ]
 filenames = [path + "/" + s for s in data_names]
 
@@ -154,7 +155,17 @@ while change > tol and i < steps:
     phi_r_f = np.real(ftf_r[:, fl])
     write_to_files(
         filenames,
-        [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s[0, :]), dfda, Ir[0, :], Ir[:, fl]],
+        [
+            phi_r_oa,
+            phi_r_f,
+            dfdz,
+            zm_r,
+            np.real(s[0, :]),
+            dfda,
+            Ir[0, :],
+            Ir[:, fl],
+            np.real(psi),
+        ],
     )
 
     # Updating the change to compare against tolerance
@@ -186,7 +197,7 @@ with open(path + "/time.txt", "w") as file:
 
 ################################################
 # create plots
-phr_oa, phr_f, gr, mr, src, zern, ir_oa, ir_f = [
+phr_oa, phr_f, gr, mr, src, zern, ir_oa, ir_f, psis = [
     np.genfromtxt(f, delimiter=",") for f in filenames
 ]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
@@ -227,9 +238,9 @@ pdzt = time.time()
 print("G Time:" + str(timedelta(seconds=pdzt - proat)))
 
 
-# plot_psi(path, psis, r, w0, skip)
-# ps = time.time()
-# print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
+plot_psi(path, psis, r, w0, skip)
+ps = time.time()
+print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
 
 plot_source(path, src, zF, f_targ, skip)
 pend = time.time()
