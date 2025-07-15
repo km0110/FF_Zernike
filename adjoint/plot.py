@@ -222,7 +222,7 @@ def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, steps):
 def plot_I_f(path, ir_f, r, w0, it_f, steps):
     for i, ref in enumerate(ir_f):
         if i % steps == 0:
-            print("PRPT_F step: %d" % i)
+            print("I_F step: %d" % i)
             # plt.figure(figsize=(11.52, 6.56), dpi=100)
             plt.plot(r / w0, it_f, label=r"$I_T(z=f)$")
 
