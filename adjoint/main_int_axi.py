@@ -25,11 +25,11 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = path.split("/")[0] + "/runs/int_" + dirname
+path = path.split("/")[0] + "/runs/int_axi_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-subdir = ["phr_f", "pr_oa", "I_OA", "I_f", "g", "psi", "mirror", "S"]
+subdir = ["phr_f", "pr_oa", "I_OA", "I_f", "g", "psi_S", "mirror"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
@@ -222,28 +222,30 @@ pplots = time.time()
 plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
 # Plotting each iteration phi_r and phi_t, the gradient and the source
-plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
-prft = time.time()
-print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
+# plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
+# prft = time.time()
+# print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
-proat = time.time()
-print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
+# plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
+# proat = time.time()
+# print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
 plot_I_OA(path, ir_oa, zF, f_targ, It[0, :], skip)
 
 plot_I_f(path, ir_f, r, w0, It[:, fl], skip)
 
-plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
-pdzt = time.time()
-print("G Time:" + str(timedelta(seconds=pdzt - proat)))
+# plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
+# pdzt = time.time()
+# print("G Time:" + str(timedelta(seconds=pdzt - proat)))
 
 
-plot_psi(path, psis, r, w0, skip)
-ps = time.time()
-print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
+# plot_psi(path, psis, r, w0, skip)
+# ps = time.time()
+# print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
 
-plot_source(path, src, zF, f_targ, skip)
+# plot_source(path, src, zF, f_targ, skip)
+plot_psi_and_source(path, psis, r, w0, src, zF, f_targ, skip)
+
 pend = time.time()
 
 print("Total Time:" + str(timedelta(seconds=pend - pstart)))

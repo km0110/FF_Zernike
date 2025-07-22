@@ -340,3 +340,33 @@ def plot_source(path, S, z, f, steps):
             plt.tight_layout()
             plt.savefig(path + "/S/S_%d" % i, dpi=100)
             plt.close()
+
+
+def plot_psi_and_source(path, psi, r, w0, S, z, f, skip):
+    # Ensure the combined directory exists
+
+    for i, (psi_ref, S_ref) in enumerate(zip(psi, S)):
+        if i % skip == 0:
+            print(f"Plotting step: {i}")
+
+            fig, axes = plt.subplots(
+                1, 2, figsize=(16, 9), dpi=100, gridspec_kw={"wspace": 0.25}
+            )
+
+            # Plot psi(r)
+            axes[0].plot(z / f, np.real(S_ref), color="green")
+            axes[0].set_title(r"$S(z)$")
+            axes[0].set_xlabel(r"$z/f$")
+            axes[0].set_ylabel(r"$S$")
+
+            # Plot psi(r) on the right
+            axes[1].plot(r / w0, np.real(psi_ref), color="blue")
+            axes[1].set_title(r"$\psi(r)$")
+            axes[1].set_xlabel(r"$r/w_0$")
+            axes[1].set_ylabel(r"$\psi$")
+            # Overall title
+            fig.suptitle(f"Step: {i}")
+            plt.subplots_adjust(left=0.1, right=0.97, top=0.88, bottom=0.12)
+            # plt.tight_layout()  # Reserve space for suptitle
+            plt.savefig(path + "/psi_S/psi_S_%d" % i, dpi=100)
+            plt.close()
