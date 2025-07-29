@@ -32,7 +32,7 @@ params = {
     "order": 0,
     "n": 3,
     "L": 5e-2,
-    "skip": 1,
+    "skip": 10,
     "stop": 1000001,
     "temp": 10,
     "c": 1,
