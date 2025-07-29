@@ -56,6 +56,7 @@ delta = params["delta"]  # weighting function in r
 n = params["n"]
 skip = params["skip"]
 factor = params["factor"]
+mu_tol = params["mu_tol"]
 ################################################
 print(w0)
 # Hankel
@@ -97,7 +98,6 @@ i = 0
 start_time = time.time()
 data = []
 
-mu_tol = 1e-6
 patience = 100  # how many iterations to wait
 min_lr = lr * 1e-3  # don’t shrink forever
 epochs_since_improvement = 0
