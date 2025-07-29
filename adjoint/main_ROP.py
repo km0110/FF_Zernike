@@ -99,7 +99,6 @@ data = []
 
 mu_tol = 1e-6
 patience = 100  # how many iterations to wait
-factor = 0.5  # how much to reduce learning rate
 min_lr = lr * 1e-3  # don’t shrink forever
 epochs_since_improvement = 0
 best_mu = 0
