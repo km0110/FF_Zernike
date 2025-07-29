@@ -55,6 +55,7 @@ tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
 n = params["n"]
 skip = params["skip"]
+factor = params["factor"]
 ################################################
 print(w0)
 # Hankel
@@ -96,13 +97,13 @@ i = 0
 start_time = time.time()
 data = []
 
-mu_tol = 1e-4
+mu_tol = 1e-6
 patience = 100  # how many iterations to wait
 factor = 0.5  # how much to reduce learning rate
-min_lr = lr * 1e-2  # don’t shrink forever
-
+min_lr = lr * 1e-3  # don’t shrink forever
+epochs_since_improvement = 0
 best_mu = 0
-
+lines = []
 while change > tol and i < steps:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
@@ -152,6 +153,7 @@ while change > tol and i < steps:
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
+    print(mu - best_mu)
     if mu - best_mu > mu_tol:
         best_mu = mu
         epochs_since_improvement = 0
@@ -161,9 +163,7 @@ while change > tol and i < steps:
     if epochs_since_improvement >= patience:
         lr = max(lr * factor, min_lr)
         epochs_since_improvement = 0  # reset after reduction
-        with open(path + "/lr.txt", "w") as file:
-            file.write("%d, %f" % (i, lr))
-
+        lines.append("%d, %e\n" % (i, lr))
     i += 1
 fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
@@ -177,8 +177,9 @@ else:
         timedelta(seconds=final_time - start_time)
     )
 
-print(output)
 
+with open(path + "/lr.txt", "w") as file:
+    file.writelines(lines)
 # write to output file how long it took to run
 with open(path + "/time.txt", "w") as file:
     file.write(output)
