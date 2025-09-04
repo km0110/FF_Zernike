@@ -66,7 +66,7 @@ fl = len(zF) // 2  # focal length index
 OoM = math.floor(math.log(w0**2, 10))  # order of magnitude of w0^2
 w_guess = 10**OoM  # guess for the spot size
 steps = params["steps"]  # max number of steps algorithm is allowed
-eta_max = params["lr"]  # learning rate
+eta_max = params["eta_t"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
 n = params["n"]
@@ -163,7 +163,7 @@ while change > tol and i < steps:
     if t_cur >= T_cur:
         t_cur = 0
         T_cur *= cycle_mult  # double the cycle length
-        eta_max *= decay_factor  # reduce peak LR
+        eta_max *= decay_factor  # reduce peak eta_t
 
     a_n = step(dfda, eta_t, a_n)
     zm_r = generate_optic(a_n, Z_fit)
@@ -187,7 +187,7 @@ while change > tol and i < steps:
     )
 
     # Updating the change to compare against tolerance
-    change = np.sum(np.abs(dfda * lr))
+    change = np.sum(np.abs(dfda * eta_t))
     i += 1
     mu = calc_mu(IrIt, Itsq)
     if i > stop and mu < 0.5:
@@ -224,7 +224,7 @@ mu_val = calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
-plot_total_change(path, r, w0, zern, lr, wl, i, n)
+plot_total_change(path, r, w0, zern, eta_t, wl, i, n)
 print("1")
 plot_max_grad(path, gr)
 print("2")
