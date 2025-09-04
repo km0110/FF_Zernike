@@ -165,7 +165,7 @@ while change > tol and i < steps:
         T_cur *= cycle_mult  # double the cycle length
         eta_max *= decay_factor  # reduce peak LR
 
-    a_n = step(dfda, lr, a_n)
+    a_n = step(dfda, eta_t, a_n)
     zm_r = generate_optic(a_n, Z_fit)
 
     # Writing to files
