@@ -130,6 +130,7 @@ t_cur = 0
 T_0 = 200  # initial cycle length
 cycle_mult = 2  # cycle length multiplier
 decay_factor = 1  # decay eta_max after each restart
+T_cur = T_0
 eta = []
 # Adjoint Optimization loop
 while change > tol and i < steps:
