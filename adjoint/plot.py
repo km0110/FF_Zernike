@@ -142,7 +142,7 @@ def plot_mirror_comp_each(path, r, w0, zm_t, mr, steps, xlim=(0, 2), ylim=(0, 3e
             print("Mirror step: %d" % i)
             plt.figure(figsize=(11.52, 6.56), dpi=100)
             plt.plot(norm_r, zm_t, label="Target Mirror")
-            plt.plot(norm_r, ref, label="Mirror at step %d" % i)
+            plt.plot(norm_r, ref - ref[0], label="Mirror at step %d" % i)
             # keep xlim and ylim across all plots by setting it based on min and max x and y values in mr
             if max(norm_r) > 2:
                 plt.xlim(xlim)
