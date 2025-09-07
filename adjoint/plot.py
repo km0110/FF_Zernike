@@ -68,6 +68,14 @@ def plot_fom_mu(path, fom, mu):
     plt.close()
 
 
+def plot_percent_change_mu(path, mu):
+    percent_change = (np.diff(mu) / mu[:-1]) * 100
+    iterations = range(len(percent_change)) + 1
+    plt.plot(iterations, percent_change)
+    plt.savefig(path + "/pc_mu")
+    plt.close()
+
+
 def plot_integrals(path, prsq, prpt, ptsq):
     plt.plot(prsq * ptsq, label=r"$\langle\phi_R^2\rangle \langle\phi_T^2\rangle$")
     plt.plot(prpt * prpt, label=r"$\langle\phi_R\phi_T\rangle^2$")
@@ -105,7 +113,7 @@ def plot_mirror_comp(path, r, w0, z_m, mr):
     norm_r = r / w0
     plt.plot(norm_r, z_m, label="Target Mirror")
     plt.plot(norm_r, mr[0], label="Initial Mirror")
-    plt.plot(norm_r, mr[-1], linestyle="--", label="Final Mirror")
+    plt.plot(norm_r, mr[-1] - mr[-1][0], linestyle="--", label="Final Mirror")
 
     # me=np.loadtxt('exp_mr.csv')
     # plt.plot(r,me,label='exp',linestyle='--',linewidth=3)
