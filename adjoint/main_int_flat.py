@@ -8,6 +8,14 @@ import shutil
 from datetime import timedelta
 
 
+def create_axiparabola(r, R, L, f0, taylor=False):
+    if taylor:
+        sag = r**2 / (4 * f0) * (1 - L / (2 * f0) * (r / R) ** 2)
+    else:
+        sag = R**2 / (4 * L) * np.log(1 + L / f0 * (r / R) ** 2)
+    return sag
+
+
 def create_flat(r, z, fl, sigma, order):
     R = np.exp(-(((r**2) / (2 * sigma**2)) ** order))[:, np.newaxis]
     # axial dependence -> shape (1, nz)
@@ -88,12 +96,14 @@ print(w0)
 phi_I = 1j * np.exp(-((r / w0) ** 40))
 
 It = create_flat(r, zF, f_targ, sigma, 20)
-plt.plot(zF, It[0, :])
-plt.savefig("intensity")
-plt.close()
-maxIt = np.max(It)
-print(maxIt)
-It = It / maxIt
+
+zm_axi = create_axiparabola(r, w0, L, f_targ)  # target mirror
+ftf_axi = forward_propagation(
+    k, phi_I, T_R2K, T_K2R, zF, zm_axi
+)  # Target profile defined using target
+
+It_axi = calc_intensity(ftf_axi)
+maxIt = np.max(It_axi)
 
 # save plot of ftf_t on axis
 # print("Plotting ftf_t")
