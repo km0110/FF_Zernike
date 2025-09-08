@@ -85,7 +85,7 @@ print(w0)
 
 # Initial propagation
 phi_I = 1j * np.exp(-((r / w0) ** 40))
-It = create_flat(r, zF, fl, sigma, 20)
+It = create_flat(r, zF, f_targ, sigma, 20)
 plt.plot(zF, It[0, :])
 plt.savefig("intensity")
 plt.close()
