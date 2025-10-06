@@ -84,7 +84,6 @@ delta = params["delta"]  # weighting function in r
 n = params["n"]
 skip = params["skip"]
 stop = params["stop"]
-sigma = params["sigma"]
 ################################################
 print(w0)
 # Hankel
@@ -94,7 +93,7 @@ print(w0)
 # Initial propagation
 phi_I = 1j * np.exp(-((r / w0) ** 40))
 
-It = create_flat(r, zF, f_targ, sigma, 20)
+It = create_flat(r, zF, f_targ, L, 20)
 
 zm_axi = create_axiparabola(r, w0, L, f_targ)  # target mirror
 ftf_axi = forward_propagation(
