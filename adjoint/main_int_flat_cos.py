@@ -95,7 +95,7 @@ phi_I = 1j * np.exp(-((r / w0) ** 40))
 
 It = create_flat(r, zF, f_targ, L, 20)
 
-zm_axi = create_axiparabola(r, w0, L, f_targ)  # target mirror
+zm_axi = create_axiparabola(r, w0, 2*L, f_targ)  # target mirror
 ftf_axi = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_axi
 )  # Target profile defined using target
@@ -153,7 +153,7 @@ while change > tol and i < steps:
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    wt = weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+    wt = weight(r, wR, zF, f_targ - dz, f_targ + (2 * L) + dz, delta)
     Ir = calc_intensity(ftf_r)
     Ir = Ir / maxIt
     Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
