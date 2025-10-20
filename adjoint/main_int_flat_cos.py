@@ -1,3 +1,4 @@
+from scipy.optimize import curve_fit
 import sys
 import os
 from gaussian_beam import *
@@ -19,14 +20,16 @@ def create_axiparabola(r, R, L, f0, taylor=False):
 def create_flat(r, z, fl, sigma, order):
     R = np.exp(-(((r**2) / (2 * sigma**2)) ** order))[:, np.newaxis]
     # axial dependence -> shape (1, nz)
-    Z = np.exp(-((((z - fl) ** 2) / (2 * sigma**2)) ** order))[np.newaxis, :]
+    Z = np.exp(-((((z - fl - sigma) ** 2) / (sigma**2)) ** order))[np.newaxis, :]
     G = R * Z
-
-    # if normalize:
-    #     A = 1.0 / (sigma_r**2 * np.sqrt(2 * np.pi) * sigma_z)
-    #     G *= A
     return G
 
+def fit_supergaussian_amplitude(z, axi, z0, sigma, order):
+    template =np.exp(-((((z - z0) ** 2) / (sigma**2)) ** order))
+    print(np.sum(axi * template))
+    print(np.sum(template**2))
+    A = np.sum(axi * template) / np.sum(template**2)
+    return A, template * A
 
 if len(sys.argv) != 2:
     print("Usage: python fom.py <path to parameter file>")
@@ -70,7 +73,7 @@ L = params["L"]
 dz = params["dz"]
 nzf = params["nzf"]
 zi = f_targ - dz
-zf = f_targ + dz
+zf = f_targ + L +  dz
 zF = np.linspace(zi, zf, nzf)
 fl = len(zF) // 2  # focal length index
 
@@ -93,15 +96,29 @@ print(w0)
 # Initial propagation
 phi_I = 1j * np.exp(-((r / w0) ** 40))
 
-It = create_flat(r, zF, f_targ, L, 20)
-
-zm_axi = create_axiparabola(r, w0, 2*L, f_targ)  # target mirror
+It = create_flat(r, zF, f_targ, L/2, 20)
+print(len(It))
+zm_axi = create_axiparabola(r, w0, L, f_targ)  # target mirror
 ftf_axi = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_axi
 )  # Target profile defined using target
 
 It_axi = calc_intensity(ftf_axi)
-maxIt = np.max(It_axi)
+# maxIt = np.max(It_axi)
+# print(np.sum(It[0,:]**2))
+
+maxIt = np.sum(It_axi[0,:] * It[0,:]) / np.sum(It[0,:]**2)
+
+# A, fit = fit_supergaussian_amplitude(zF, It_axi[0,:], fl+L/2, L/2, 10)
+plt.figure()
+plt.plot(zF, It_axi[0,:], label="axiparabola")
+plt.plot(zF, maxIt*It[0,:], label='supergaussian fit')
+plt.xlabel('z (cm)')
+plt.ylabel('Intensity')
+plt.legend()
+plt.savefig(path +'/flat_axi')
+
+plt.close()
 
 # save plot of ftf_t on axis
 # print("Plotting ftf_t")
