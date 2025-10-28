@@ -20,21 +20,40 @@ def create_starting_optic(r, R, k=-1):
     return z
 
 
-def calc_Z(rho, n):
-    # pols = np.array(
-    #     [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1), np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1)]
-    # )
+# def calc_Z(rho, n):
+#     # pols = np.array(
+#     #     [np.ones_like(rho), np.sqrt(3) * (2 * rho**2 - 1), np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1)]
+#     # )
 
-    zern_pols = np.array(
-        [
-            np.ones_like(rho),
-            np.sqrt(3) * (2 * rho**2 - 1),
-            np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1),
-            np.sqrt(7) * (20 * rho**6 - 30 * rho**4 + 12 * rho**2 - 1),
-        ]
-    )
-    pols = zern_pols[:n]
-    return np.column_stack(pols)
+#     zern_pols = np.array(
+#         [
+#             np.ones_like(rho),
+#             np.sqrt(3) * (2 * rho**2 - 1),
+#             np.sqrt(5) * (6 * rho**4 - 6 * rho**2 + 1),
+#             np.sqrt(7) * (20 * rho**6 - 30 * rho**4 + 12 * rho**2 - 1),
+#         ]
+#     )
+#     pols = zern_pols[:n]
+#     return np.column_stack(pols)
+
+
+def calc_Z(rho, num):
+    n = num * 2
+    rho = np.asarray(rho)
+    Z = np.zeros((rho.size, num + 1), dtype=float)
+
+    for col, m in enumerate(range(0, n + 1, 2)):  # m = 0, 2, 4, ...
+        res = np.zeros_like(rho, dtype=float)
+        for s in range(m // 2 + 1):
+            coeff = (
+                ((-1) ** s)
+                * math.factorial(m - s)
+                / (math.factorial(s) * (math.factorial(m // 2 - s) ** 2))
+            )
+            res += coeff * rho ** (m - 2 * s)
+        res *= math.sqrt(m + 1)  # orthonormal scaling
+        Z[:, col] = res
+    return Z
 
 
 def calc_Z_plus(Z):
