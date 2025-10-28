@@ -38,11 +38,10 @@ def create_starting_optic(r, R, k=-1):
 
 
 def calc_Z(rho, num):
-    n = num * 2
     rho = np.asarray(rho)
-    Z = np.zeros((rho.size, num + 1), dtype=float)
+    Z = np.zeros((rho.size, num), dtype=float)
 
-    for col, m in enumerate(range(0, n + 1, 2)):  # m = 0, 2, 4, ...
+    for col, m in enumerate(range(0, 2 * num - 1, 2)):  # m = 0, 2, 4, ...
         res = np.zeros_like(rho, dtype=float)
         for s in range(m // 2 + 1):
             coeff = (
