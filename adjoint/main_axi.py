@@ -123,7 +123,6 @@ while change > tol and i < steps:
     # Forward propagation
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
     Ir = calc_intensity(ftf_r)
-    Ir = Ir / maxIt
 
     # Calculating Integrals for Source
     pR, pT = weighted_phi(r, wR, zF, f_targ - dz, f_targ + L + dz, ftf_r, ftf_t, delta)
