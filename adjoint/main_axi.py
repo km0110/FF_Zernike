@@ -213,7 +213,7 @@ print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 # plot_psi(path, psis, r, w0, skip)
 # ps = time.time()
 # print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
-plot_psi_and_source(path, psis, r, w0, src, zF, f_targ, skip)
+# plot_psi_and_source(path, psis, r, w0, src, zF, f_targ, skip)
 
 pend = time.time()
 
