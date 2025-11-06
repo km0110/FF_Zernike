@@ -172,7 +172,7 @@ with open(path + "/time.txt", "w") as file:
 
 ################################################
 # create plots
-phr_oa, phr_f, gr, mr, psis, zern = [np.genfromtxt(f, delimiter=",") for f in filenames]
+phr_oa, phr_f, gr, mr, src, zern = [np.genfromtxt(f, delimiter=",") for f in filenames]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
 figom = FOM(pr2, rt, pt2)
 mu_val = calc_mu(rt, pt2)
@@ -187,7 +187,7 @@ print("2")
 plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
-plot_mirror_comp(path, r, w0, zm_t, mr, i)
+plot_mirror_comp(path, r, w0, zm_t, mr)
 plot_zernikes(path, zern, rmax, f_targ, n)
 
 pplots = time.time()
@@ -203,16 +203,17 @@ plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
 proat = time.time()
 print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
-plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
+# plot_phi_t_phi_r_OA_I(path, phr_oa, zF, f_targ, ftf_t, skip)
 
-plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
-pdzt = time.time()
-print("G Time:" + str(timedelta(seconds=pdzt - proat)))
+# plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
+# pdzt = time.time()
+# print("G Time:" + str(timedelta(seconds=pdzt - proat)))
 
 
-plot_psi(path, psis, r, w0, skip)
-ps = time.time()
-print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
+# plot_psi(path, psis, r, w0, skip)
+# ps = time.time()
+# print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
+plot_psi_and_source(path, psis, r, w0, src, zF, f_targ, skip)
 
 pend = time.time()
 
