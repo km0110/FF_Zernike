@@ -141,7 +141,7 @@ while change > tol and i < steps:
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(psi), dfda])
+    write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(s), dfda])
 
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
@@ -179,7 +179,7 @@ mu_val = calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
-print("psi:", psis.shape)
+# print("psi:", psis.shape)
 plot_total_change(path, r, w0, zern, lr, wl, i, n)
 print("1")
 plot_max_grad(path, gr)
