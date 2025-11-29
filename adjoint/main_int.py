@@ -124,7 +124,7 @@ i = 0
 start_time = time.time()
 data = []
 break_flag = False
-while change > tol and i < steps:
+while change > tol and i < steps+1:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Forward propagation
@@ -149,6 +149,8 @@ while change > tol and i < steps:
     Z_plus = calc_Z_plus(Z_fit)
     a_n = step(dfda, lr, a_n)
     zm_r = generate_optic(a_n, Z_fit)
+    # zm_r_unshifted = generate_optic(a_n, Z_fit)
+    # zm_r = zm_r_unshifted - zm_r_unshifted[0]
 
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])

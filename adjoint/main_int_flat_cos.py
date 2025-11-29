@@ -197,6 +197,8 @@ while change > tol and i < steps:
 
     a_n = step(dfda, eta_t, a_n)
     zm_r = generate_optic(a_n, Z_fit)
+    # zm_r_unshifted = generate_optic(a_n, Z_fit)
+    # zm_r = zm_r_unshifted - zm_r_unshifted[0]
 
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])

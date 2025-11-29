@@ -85,7 +85,7 @@ delta = params["delta"]  # weighting function in r
 n = params["n"]
 skip = params["skip"]
 stop = params["stop"]
-sigma = params["sigma"]
+# sigma = params["sigma"]
 ################################################
 print(w0)
 # Hankel
@@ -95,7 +95,7 @@ print(w0)
 # Initial propagation
 phi_I = 1j * np.exp(-((r / w0) ** 40))
 
-It = create_flat(r, zF, f_targ, sigma, 20)
+It = create_flat(r, zF, f_targ, L/2, 20)
 
 zm_axi = create_axiparabola(r, w0, L, f_targ)  # target mirror
 ftf_axi = forward_propagation(
@@ -103,8 +103,8 @@ ftf_axi = forward_propagation(
 )  # Target profile defined using target
 
 It_axi = calc_intensity(ftf_axi)
-maxIt = np.max(It_axi)
-
+# maxIt = np.max(It_axi)
+maxIt=np.sum(It_axi[0,:] * It[0,:]) / np.sum(It[0,:]**2)
 # save plot of ftf_t on axis
 # print("Plotting ftf_t")
 # plt.figure(figsize=(11.52, 6.56), dpi=100)
@@ -164,7 +164,8 @@ while change > tol and i < steps:
     Z_plus = calc_Z_plus(Z_fit)
     a_n = step(dfda, lr, a_n)
     zm_r = generate_optic(a_n, Z_fit)
-
+    # zm_r_unshifted = generate_optic(a_n, Z_fit)
+    # zm_r = zm_r_unshifted - zm_r_unshifted[0]
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])

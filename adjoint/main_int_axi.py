@@ -1,7 +1,11 @@
 import sys
 import os
 from gaussian_beam import *
-from adjoint_intensity import *
+import importlib
+import adjoint_intensity as adj
+# print("Using:", adjoint_intensity.__file__)
+# importlib.reload(adjoint_intensity)
+# from adjoint_intensity import *
 from plot import *
 import time
 import shutil
@@ -23,7 +27,7 @@ if len(sys.argv) != 2:
 # Create the directory for the run
 
 path = sys.argv[1]
-params = initialize_variables_from_file(sys.argv[1])
+params = adj.initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
 path = path.split("/")[0] + "/runs/int_axi_" + dirname
 if os.path.exists(path):
@@ -70,23 +74,25 @@ steps = params["steps"]  # max number of steps algorithm is allowed
 lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
-n = params["n"]
+num = params["n"]
 skip = params["skip"]
 stop = params["stop"]
+# power = params['power']
 ################################################
+power=40
 print(w0)
 # Hankel
-[r, k] = DHTarrays(nr, rmax, ell)
-[T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
+[r, k] = adj.DHTarrays(nr, rmax, ell)
+[T_R2K, T_K2R] = adj.DHTtransformMatrix(nr, rmax, ell)
 
 # Initial propagation
-phi_I = 1j * np.exp(-((r / w0) ** 40))
+phi_I = 1j * np.exp(-((r / w0) ** power))
 zm_t = create_axiparabola(r, w0, L, f_targ)  # target mirror
-ftf_t = forward_propagation(
+ftf_t = adj.forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
 )  # Target profile defined using target
 
-It = calc_intensity(ftf_t)
+It = adj.calc_intensity(ftf_t)
 maxIt = np.max(It)
 
 It = It / maxIt
@@ -98,13 +104,12 @@ It = It / maxIt
 # plt.savefig("check")
 # plt.close()
 # print("Done")
-a_n = create_initial_coeff(rmax, 2 * f_init, n)
-print(a_n)
+a_n = adj.create_initial_coeff(rmax, 2 * f_init, num)
 rho = r / rmax
-Z_fit = calc_Z(rho, n)
-Z_plus = calc_Z_plus(Z_fit)
+Z_fit = adj.calc_Z(rho, num)
+Z_plus = adj.calc_Z_plus(Z_fit)
 
-zm_r = generate_optic(a_n, Z_fit)  # initial mirror
+zm_r = adj.generate_optic(a_n, Z_fit)  # initial mirror
 
 data_names = [
     "phi_r_OA.csv",
@@ -125,36 +130,38 @@ i = 0
 start_time = time.time()
 data = []
 break_flag = False
-while change > tol and i < steps:
+while change > tol and i < steps+1:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Forward propagation
-    ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
+    ftf_r = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    wt = weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
-    Ir = calc_intensity(ftf_r)
+    wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+    Ir = adj.calc_intensity(ftf_r)
     Ir = Ir / maxIt
-    Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
+    Irsq, IrIt, Itsq = adj.int_pairs(r, zF, wt, Ir, It)
     data.append(np.real([Irsq, IrIt, Itsq]))
 
     # Calculating S and psi
-    s = S(wt, ftf_r, Ir, It, IrIt, Itsq)
+    s = adj.S(wt, ftf_r, Ir, It, IrIt, Itsq)
     s_hat = T_R2K @ s
-    psi_hat = calc_psi_hat(k, k0, zF, s_hat)
+    psi_hat = adj.calc_psi_hat(k, k0, zF, s_hat)
     psi = T_K2R @ psi_hat
     # Calculating the gradient and updating the mirror
-    dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
+    dfdz = np.real(adj.gradient(k0, phi_I, psi, a_n, Z_fit))
     # dfda = dfdz @ Z_fit
     dfda = Z_plus @ dfdz
-    Z_plus = calc_Z_plus(Z_fit)
-    a_n = step(dfda, lr, a_n)
-    zm_r = generate_optic(a_n, Z_fit)
+    Z_plus = adj.calc_Z_plus(Z_fit)
+    a_n = adj.step(dfda, lr, a_n)
+    zm_r = adj.generate_optic(a_n, Z_fit)
+    # zm_r_unshifted = generate_optic(a_n, Z_fit)
+    # zm_r = zm_r_unshifted - zm_r_unshifted[0]
 
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(
+    adj.write_to_files(
         filenames,
         [
             phi_r_oa,
@@ -172,12 +179,12 @@ while change > tol and i < steps:
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
     i += 1
-    mu = calc_mu(IrIt, Itsq)
+    mu = adj.calc_mu(IrIt, Itsq)
     if i > stop and mu < 0.5:
         break_flag = True
         break
 
-fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
+fr = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
 final_time = time.time()
 
@@ -202,12 +209,12 @@ phr_oa, phr_f, gr, mr, src, zern, ir_oa, ir_f, psis = [
     np.genfromtxt(f, delimiter=",") for f in filenames
 ]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
-figom = FOM(pr2, rt, pt2)
-mu_val = calc_mu(rt, pt2)
+figom = adj.FOM(pr2, rt, pt2)
+mu_val = adj.calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
-plot_total_change(path, r, w0, zern, lr, wl, i, n)
+plot_total_change(path, r, w0, zern, lr, wl, i, num)
 print("1")
 plot_max_grad(path, gr)
 print("2")
@@ -215,7 +222,7 @@ plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr)
-plot_zernikes(path, zern, rmax, f_targ, n)
+plot_zernikes(path, zern, rmax, f_targ, num)
 
 pplots = time.time()
 # print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
