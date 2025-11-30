@@ -1,7 +1,7 @@
 import sys
 import os
 from gaussian_beam import *
-from adjoint_intensity import *
+import adjoint_intensity as adj
 from plot import *
 import time
 import shutil
@@ -35,7 +35,7 @@ if len(sys.argv) != 2:
 # Create the directory for the run
 
 path = sys.argv[1]
-params = initialize_variables_from_file(sys.argv[1])
+params = adj.initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
 path = path.split("/")[0] + "/runs/int_axi_" + dirname
 if os.path.exists(path):
@@ -89,8 +89,8 @@ stop = params["stop"]
 ################################################
 print(w0)
 # Hankel
-[r, k] = DHTarrays(nr, rmax, ell)
-[T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
+[r, k] = adj.DHTarrays(nr, rmax, ell)
+[T_R2K, T_K2R] = adj.DHTtransformMatrix(nr, rmax, ell)
 
 # Initial propagation
 phi_I = 1j * np.exp(-((r / w0) ** 40))
@@ -98,11 +98,11 @@ phi_I = 1j * np.exp(-((r / w0) ** 40))
 It = create_flat(r, zF, f_targ, L / 2, 20)
 
 zm_axi = create_axiparabola(r, w0, L, f_targ)  # target mirror
-ftf_axi = forward_propagation(
+ftf_axi = adj.forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_axi
 )  # Target profile defined using target
 
-It_axi = calc_intensity(ftf_axi)
+It_axi = adj.calc_intensity(ftf_axi)
 # maxIt = np.max(It_axi)
 maxIt = np.sum(It_axi[0, :] * It[0, :]) / np.sum(It[0, :] ** 2)
 # save plot of ftf_t on axis
@@ -113,8 +113,8 @@ maxIt = np.sum(It_axi[0, :] * It[0, :]) / np.sum(It[0, :] ** 2)
 # plt.close()
 # print("Done")
 rho = r / rmax
-Z_fit = calc_Z(rho, n)
-Z_plus = calc_Z_plus(Z_fit)
+Z_fit = adj.calc_Z(rho, n)
+Z_plus = adj.calc_Z_plus(Z_fit)
 
 zm_r = zm_axi
 a_n = zm_r @ Z_fit
@@ -141,33 +141,33 @@ while change > tol and i < steps:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
     # Forward propagation
-    ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
+    ftf_r = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    wt = weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
-    Ir = calc_intensity(ftf_r)
+    wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+    Ir = adj.calc_intensity(ftf_r)
     Ir = Ir / maxIt
-    Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
+    Irsq, IrIt, Itsq = adj.int_pairs(r, zF, wt, Ir, It)
     data.append(np.real([Irsq, IrIt, Itsq]))
 
     # Calculating S and psi
-    s = S(wt, ftf_r, Ir, It, IrIt, Itsq)
+    s = adj.S(wt, ftf_r, Ir, It, IrIt, Itsq)
     s_hat = T_R2K @ s
-    psi_hat = calc_psi_hat(k, k0, zF, s_hat)
+    psi_hat = adj.calc_psi_hat(k, k0, zF, s_hat)
     psi = T_K2R @ psi_hat
     # Calculating the gradient and updating the mirror
-    dfdz = np.real(gradient(k0, phi_I, psi, a_n, Z_fit))
+    dfdz = np.real(adj.gradient(k0, phi_I, psi, a_n, Z_fit))
     # dfda = dfdz @ Z_fit
     dfda = Z_plus @ dfdz
-    Z_plus = calc_Z_plus(Z_fit)
-    a_n = step(dfda, lr, a_n)
-    zm_r = generate_optic(a_n, Z_fit)
+    Z_plus = adj.calc_Z_plus(Z_fit)
+    a_n = adj.step(dfda, lr, a_n)
+    zm_r = adj.generate_optic(a_n, Z_fit)
     # zm_r_unshifted = generate_optic(a_n, Z_fit)
     # zm_r = zm_r_unshifted - zm_r_unshifted[0]
     # Writing to files
     phi_r_oa = np.real(ftf_r[0, :])
     phi_r_f = np.real(ftf_r[:, fl])
-    write_to_files(
+    adj.write_to_files(
         filenames,
         [
             phi_r_oa,
@@ -185,12 +185,12 @@ while change > tol and i < steps:
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfda * lr))
     i += 1
-    mu = calc_mu(IrIt, Itsq)
+    mu = adj.calc_mu(IrIt, Itsq)
     if i > stop and mu < 0.5:
         break_flag = True
         break
 
-fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
+fr = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
 final_time = time.time()
 
@@ -215,8 +215,8 @@ phr_oa, phr_f, gr, mr, src, zern, ir_oa, ir_f, psis = [
     np.genfromtxt(f, delimiter=",") for f in filenames
 ]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
-figom = FOM(pr2, rt, pt2)
-mu_val = calc_mu(rt, pt2)
+figom = adj.FOM(pr2, rt, pt2)
+mu_val = adj.calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
