@@ -117,7 +117,7 @@ Z_fit = adj.calc_Z(rho, n)
 Z_plus = adj.calc_Z_plus(Z_fit)
 
 zm_r = zm_axi
-a_n = zm_r @ Z_fit
+a_n = Z_plus @ zm_r
 data_names = [
     "phi_r_OA.csv",
     "phi_r_focus.csv",
