@@ -19,7 +19,7 @@ def create_axiparabola(r, R, L, f0, taylor=False):
 def create_flat(r, z, fl, sigma, order):
     R = np.exp(-(((r**2) / (2 * sigma**2)) ** order))[:, np.newaxis]
     # axial dependence -> shape (1, nz)
-    Z = np.exp(-((((z - fl) ** 2) / (2 * sigma**2)) ** order))[np.newaxis, :]
+    Z = np.exp(-((((z - fl - sigma) ** 2) / (sigma**2)) ** order))[np.newaxis, :]
     G = R * Z
 
     # if normalize:
