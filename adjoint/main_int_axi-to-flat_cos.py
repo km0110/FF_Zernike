@@ -199,7 +199,7 @@ while change > tol and i < steps:
     )
 
     # Updating the change to compare against tolerance
-    change = np.sum(np.abs(dfda * lr))
+    change = np.sum(np.abs(dfda * eta_t))
     i += 1
     mu = adj.calc_mu(IrIt, Itsq)
     if i > stop and mu < 0.5:
@@ -236,7 +236,7 @@ mu_val = adj.calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
-plot_total_change(path, r, w0, zern, lr, wl, i, n)
+plot_total_change(path, r, w0, zern, eta_t, wl, i, n)
 print("1")
 plot_max_grad(path, gr)
 print("2")
