@@ -60,7 +60,7 @@ L_t = params["L_t"]
 dz = params["dz"]
 nzf = params["nzf"]
 zi = f_targ - dz
-zf = f_targ + L + dz
+zf = f_targ + L_t + dz
 zF = np.linspace(zi, zf, nzf)
 fl = len(zF) // 2  # focal length index
 
