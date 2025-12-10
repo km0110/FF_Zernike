@@ -106,7 +106,7 @@ Z_fit = adj.calc_Z(rho, n)
 Z_plus = adj.calc_Z_plus(Z_fit)
 zm_r = create_axiparabola(r, w0, L, f_init)  # target mirror
 
-# a_n = Z_plus @ zm_r
+a_n = Z_plus @ zm_r
 data_names = [
     "phi_r_OA.csv",
     "phi_r_focus.csv",
