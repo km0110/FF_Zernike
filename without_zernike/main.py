@@ -106,14 +106,14 @@ while change > tol and i < steps:
     Ir = calc_intensity(ftf_r)
     # TODO Fix Weight
     # Calculating Integrals for Source
-    pR, pT = weighted_phi(r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta)
+    wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
     prsq, prpt, ptsq = int_pairs(
-        r, zF, pR, pT, ftf_r, ftf_t
+        r, zF, wt, ftf_r, ftf_t
     )  # phi_r_sq, phi_r_phi_t, phi_t_sq
     data.append(np.real([prsq, prpt, ptsq]))
 
     # Calculating S and psi
-    s = S(pR, pT, prpt, ptsq)
+    s = S(wt, ftf_r, ftf_t, prpt, ptsq)
     s_hat = T_R2K @ s
     psi_hat = calc_psi_hat(k, k0, zF, s_hat)
     psi = T_K2R @ psi_hat
