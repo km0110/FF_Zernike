@@ -25,6 +25,8 @@ subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "mirror", "psi_S"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
+with open(path + "/time.txt", "w") as file:
+    file.write(sys.argv[0])
 ################################################
 # Lens parameters
 f_targ = params["f_targ"]  # focal length of lens
@@ -102,7 +104,7 @@ while change > tol and i < steps:
     # Forward propagation
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
     Ir = calc_intensity(ftf_r)
-
+    # TODO Fix Weight
     # Calculating Integrals for Source
     pR, pT = weighted_phi(r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta)
     prsq, prpt, ptsq = int_pairs(
@@ -189,13 +191,13 @@ pplots = time.time()
 # print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
 plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
-# # Plotting each iteration phi_r and phi_t, the gradient and the source
+# Plotting each iteration phi_r and phi_t, the gradient and the source
 plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
-prft = time.time()
+# prft = time.time()
 # print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
 plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
-proat = time.time()
+# proat = time.time()
 # print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
 plot_I_OA(path, ir_oa, zF, f_targ, It[0, :], skip)

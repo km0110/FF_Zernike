@@ -179,33 +179,44 @@ def weight(r, R, z, zi, zf, delta):
     return w
 
 
-def integrate(r, z, phi1, phi2, method=simpson):
-    return (
-        2
-        * np.pi
-        * method(method(np.real(phi1) * np.real(phi2) * r[:, np.newaxis], z), r)
-    )
+# def integrate(r, z, phi1, phi2, method=simpson):
+#     return (
+#         2
+#         * np.pi
+#         * method(method(np.real(phi1) * np.real(phi2) * r[:, np.newaxis], z), r)
+#     )
+
+
+def integrate(r, z, w, int1, int2, method=simpson):
+    return 2 * np.pi * method(method(w * int1 * int2 * r[:, np.newaxis], z), r)
 
 
 # In[15]:
 
 
-def weighted_phi(r, R, z, zi, zf, phi_r, phi_t, delta):
-    wz = w_z(z, zi, zf)
-    wxp = w_xp(r, R, delta)
-    pr = phi_r * wz * wxp[:, np.newaxis]
-    pt = phi_t * wz * wxp[:, np.newaxis]
-    return pr, pt
+# def weighted_phi(r, R, z, zi, zf, phi_r, phi_t, delta):
+#     wz = w_z(z, zi, zf)
+#     wxp = w_xp(r, R, delta)
+#     pr = phi_r * wz * wxp[:, np.newaxis]
+#     pt = phi_t * wz * wxp[:, np.newaxis]
+#     return pr, pt
 
 
 # In[16]:
 
 
-def int_pairs(r, z, pr, pt, phi_r, phi_t):
-    phi_r_sq = integrate(r, z, pr, phi_r)
-    phi_r_phi_t = integrate(r, z, pr, phi_t)
-    phi_t_sq = integrate(r, z, pt, phi_t)
-    return phi_r_sq, phi_r_phi_t, phi_t_sq
+# def int_pairs(r, z, pr, pt, phi_r, phi_t):
+#     phi_r_sq = integrate(r, z, pr, phi_r)
+#     phi_r_phi_t = integrate(r, z, pr, phi_t)
+#     phi_t_sq = integrate(r, z, pt, phi_t)
+#     return phi_r_sq, phi_r_phi_t, phi_t_sq
+
+
+def int_pairs(r, z, w, phi_r, phi_t):
+    Irsq = integrate(r, z, w, phi_r, phi_r)
+    IrIt = integrate(r, z, w, phi_r, phi_t)
+    Itsq = integrate(r, z, w, phi_t, phi_t)
+    return Irsq, IrIt, Itsq
 
 
 # In[17]:
@@ -225,9 +236,9 @@ def calc_mu(prpt, ptsq):
 # In[19]:
 
 
-def S(pr, pt, prpt, ptsq):
+def S(w, phi_r, phi_t, prpt, ptsq):
     mu = calc_mu(prpt, ptsq)
-    s = np.real(pr) - mu * np.real(pt)
+    s = np.real(phi_r) - mu * np.real(phi_t)
     # s=pr-m*pt
     return s
 
@@ -248,11 +259,11 @@ def calc_psi_hat(k, k0, z, s_hat, method=simpson):
 
 def adjoint(r, wR, k, k0, z, zmin, zmax, phi_r, phi_t, T_R2K, delta):
     # print('pr pt')
-    pR, pT = weighted_phi(r, wR, z, zmin, zmax, phi_r, phi_t, delta)
+    w = weight(r, wR, z, zmin, zmax, delta)
     # print('int pairs')
-    _, prpt, ptsq = int_pairs(r, z, pR, pT, phi_r, phi_t)
+    _, prpt, ptsq = int_pairs(r, z, w, phi_r, phi_t)
     # print('s')
-    s = S(pR, pT, prpt, ptsq)
+    s = S(w, phi_r, phi_t, prpt, ptsq)
     s_hat = T_R2K @ s
     psi_hat = calc_psi_hat(k, k0, z, s_hat)
     return psi_hat
