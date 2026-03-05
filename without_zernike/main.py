@@ -19,7 +19,9 @@ path = path.split("/")[0] + "/runs/para_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-subdir = ["phr_f", "pr_oa", "I_OA", "I_f", "g", "psi", "mirror", "S", "psi_S"]
+# subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "psi", "mirror", "S", "psi_S"]
+subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "mirror", "psi_S"]
+
 for s in subdir:
     os.makedirs(path + "/" + s)
 
@@ -188,12 +190,12 @@ pplots = time.time()
 plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 
 # # Plotting each iteration phi_r and phi_t, the gradient and the source
-# plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
-# prft = time.time()
+plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
+prft = time.time()
 # print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
 
-# plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
-# proat = time.time()
+plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
+proat = time.time()
 # print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
 
 plot_I_OA(path, ir_oa, zF, f_targ, It[0, :], skip)

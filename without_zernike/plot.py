@@ -224,7 +224,7 @@ def plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, steps):
             plt.legend()
             #     plt.show()
             plt.tight_layout()
-            plt.savefig(path + "/phr_f/phr_f_%d" % i, dpi=100)
+            plt.savefig(path + "/pr_f/pr_f_%d" % i, dpi=100)
             plt.close()
 
 

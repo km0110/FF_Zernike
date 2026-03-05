@@ -1,2 +1,0 @@
-Algorithm failed to converge in 2 steps 
-Total Time:0:00:00.548373
