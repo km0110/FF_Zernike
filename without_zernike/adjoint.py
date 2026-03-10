@@ -98,6 +98,8 @@ def propagate(fe, k, k0, z, T_R2K, T_K2R):
     # print(T_K2R.shape)
     # 4) Inverse Hankel transform 𝐸̃ from 𝑘𝑟-space to 𝑟-space through multiplying by the inverse transform matrix
     fT = T_K2R @ (FT.T)
+    # fT = (T_K2R@(FT.T)).T
+    print(np.shape(fT))
     return fT
 
 
@@ -188,7 +190,10 @@ def weight(r, R, z, zi, zf, delta):
 
 
 def integrate(r, z, w, int1, int2, method=simpson):
-    return 2 * np.pi * method(method(w * int1 * int2 * r[:, np.newaxis], z), r)
+    # return 2 * np.pi * method(method(w * int1 * int2 * r[:, np.newaxis], z), r)
+    # return np.abs(2*np.pi*method(method(int1*np.conj(int2)*r[:,np.newaxis],z),r))
+    return 2 * np.pi * method(method(np.real(int1) * w *  np.real(int1) * r[:, np.newaxis], z), r)
+
 
 
 # In[15]:
@@ -238,7 +243,7 @@ def calc_mu(prpt, ptsq):
 
 def S(w, phi_r, phi_t, prpt, ptsq):
     mu = calc_mu(prpt, ptsq)
-    s = np.real(phi_r) - mu * np.real(phi_t)
+    s = w * np.real(phi_r) - mu * np.real(phi_t)
     # s=pr-m*pt
     return s
 

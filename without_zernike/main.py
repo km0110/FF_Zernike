@@ -107,6 +107,7 @@ while change > tol and i < steps:
     # TODO Fix Weight
     # Calculating Integrals for Source
     wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
+    print(np.shape(ftf_r))
     prsq, prpt, ptsq = int_pairs(
         r, zF, wt, ftf_r, ftf_t
     )  # phi_r_sq, phi_r_phi_t, phi_t_sq
