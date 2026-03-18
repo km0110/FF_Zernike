@@ -77,7 +77,7 @@ def DHTtransformMatrix(N, R, ell):
     A = abs(jv(ell + 1, alpha))
     T_R2K = 4.0 * np.pi * (R / kmax) * T * A[:, None] / A[None, :]
     T_K2R = (1 / np.pi) * (kmax / R) * T * A[:, None] / A[None, :]
-
+    print("UPDATED")
     return T_R2K, T_K2R
 
 
@@ -99,7 +99,7 @@ def propagate(fe, k, k0, z, T_R2K, T_K2R):
     # 4) Inverse Hankel transform 𝐸̃ from 𝑘𝑟-space to 𝑟-space through multiplying by the inverse transform matrix
     fT = T_K2R @ (FT.T)
     # fT = (T_K2R@(FT.T)).T
-    print(np.shape(fT))
+    # print(np.shape(fT))
     return fT
 
 
@@ -192,7 +192,7 @@ def weight(r, R, z, zi, zf, delta):
 def integrate(r, z, w, int1, int2, method=simpson):
     # return 2 * np.pi * method(method(w * int1 * int2 * r[:, np.newaxis], z), r)
     # return np.abs(2*np.pi*method(method(int1*np.conj(int2)*r[:,np.newaxis],z),r))
-    return 2 * np.pi * method(method(np.real(int1) * w *  np.real(int1) * r[:, np.newaxis], z), r)
+    return 2 * np.pi * method(method(np.real(int1) * w *  np.real(int2) * r[:, np.newaxis], z), r)
 
 
 

@@ -66,7 +66,7 @@ print(w0)
 [T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
 
 # Initial propagation
-phi_I = 1j * np.exp(-((r / w0) ** 2))
+phi_I = np.exp(-((r / w0) ** 2))
 zm_t = create_starting_optic(r, 2 * f_targ)  # target mirror
 ftf_t = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
@@ -107,7 +107,7 @@ while change > tol and i < steps:
     # TODO Fix Weight
     # Calculating Integrals for Source
     wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
-    print(np.shape(ftf_r))
+    # print(np.shape(ftf_r))
     prsq, prpt, ptsq = int_pairs(
         r, zF, wt, ftf_r, ftf_t
     )  # phi_r_sq, phi_r_phi_t, phi_t_sq
