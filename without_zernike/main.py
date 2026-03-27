@@ -21,7 +21,6 @@ if os.path.exists(path):
 os.makedirs(path)  # Calculate all initial parameters from the input file:
 # subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "psi", "mirror", "S", "psi_S"]
 subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "mirror", "psi_S"]
-
 for s in subdir:
     os.makedirs(path + "/" + s)
 
