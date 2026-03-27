@@ -19,13 +19,12 @@ path = path.split("/")[0] + "/runs/para_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-# subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "psi", "mirror", "S", "psi_S"]
 subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "mirror", "psi_S"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
 with open(path + "/time.txt", "w") as file:
-    file.write(sys.argv[0])
+    file.write(str(sys.argv[0]))
 ################################################
 # Lens parameters
 f_targ = params["f_targ"]  # focal length of lens

@@ -28,13 +28,12 @@ path = path.split("/")[0] + "/runs/para_int_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
-# subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "psi", "mirror", "S", "psi_S"]
 subdir = ["pr_f", "pr_oa", "I_OA", "I_f", "g", "mirror", "psi_S"]
 for s in subdir:
     os.makedirs(path + "/" + s)
 
 with open(path + "/time.txt", "w") as file:
-    file.write(sys.argv[0])
+    file.write(str(sys.argv[0]))
 ################################################
 # Lens parameters
 f_targ = params["f_targ"]  # focal length of lens
@@ -87,13 +86,6 @@ maxIt = np.max(It)
 
 It = It / maxIt
 
-# save plot of ftf_t on axis
-# print("Plotting ftf_t")
-# plt.figure(figsize=(11.52, 6.56), dpi=100)
-# plt.plot((zF - f_targ) * 100, np.real(ftf_t[0, :]))
-# plt.savefig("check")
-# plt.close()
-# print("Done")
 # a_n = create_initial_coeff(rmax, 2 * f_init, n)
 # print(a_n)
 # rho = r / rmax
