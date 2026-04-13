@@ -144,7 +144,7 @@ while change > tol and i < steps:
     )
 
     # Updating the change to compare against tolerance
-    change = np.sum(np.abs(dfdz * lr))
+    change = np.max(np.abs(dfdz * lr))
     i += 1
 fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
@@ -185,6 +185,7 @@ print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr)
 # plot_zernikes(path, zern, rmax, f_targ, n)
+plot_mirror_comp(path, r, w0, zm_t, mr, do_shift=True)
 
 pplots = time.time()
 # print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))

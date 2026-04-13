@@ -99,22 +99,43 @@ def plot_max_grad(path, gr):
 
     # plt.show()
 
-
-# # Compare $\phi_T$ to $\phi_R$ for each step
-
-# In[4]:
-
-
-# # Show Target, Initial, and Final Mirror
-
-# In[8]:
+def spikes(mirror):
+    ddfmr = np.diff(mirror, n=2)
+    spikes = np.where(ddfmr < -4.5e-7)[0] + 1
+    return spikes
 
 
-def plot_mirror_comp(path, r, w0, z_m, mr):
+# In[27]:
+
+
+def shift(mirror, spikes):
+    new_mir = np.copy(mirror)
+    n = len(spikes)  # number of shifts
+    spikes = np.append(spikes, len(mirror))
+    for i in range(n):
+        start = spikes[i]
+        end = spikes[i + 1]
+        new_mir[start:end] -= (i + 1) * 5e-7
+    return new_mir
+
+
+def plot_mirror_comp(path, r, w0, z_m, mr, do_shift=False):
     norm_r = r / w0
     plt.plot(norm_r, z_m, label="Target Mirror")
     plt.plot(norm_r, mr[0], label="Initial Mirror")
-    plt.plot(norm_r, mr[-1] - mr[-1][0], linestyle="--", label="Final Mirror")
+    sp = spikes(mr[-1])
+
+    if do_shift:
+        final_mirror = shift(mr[-1], sp)
+        name = "/mirror_comp_shifted"
+    else:
+        final_mirror = mr[-1]
+        for s in r[sp]:
+            plt.axvline(s / w0, linestyle="--", c="k", linewidth=2)
+        name = "/mirror_comp"
+    
+    plt.plot(norm_r, final_mirror, label="Final Mirror", linestyle="--", linewidth=4)
+
 
     # me=np.loadtxt('exp_mr.csv')
     # plt.plot(r,me,label='exp',linestyle='--',linewidth=3)
@@ -130,7 +151,7 @@ def plot_mirror_comp(path, r, w0, z_m, mr):
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(path + "/mirror_comp.png")
+    plt.savefig(path + name)
     plt.close()
 
 
@@ -143,7 +164,10 @@ def plot_mirror_comp_each(path, r, w0, zm_t, mr, steps, xlim=(0, 2), ylim=(0, 3e
             print("Mirror step: %d" % i)
             plt.figure(figsize=(11.52, 6.56), dpi=100)
             plt.plot(norm_r, zm_t, label="Target Mirror")
-            plt.plot(norm_r, ref - ref[0], label="Mirror at step %d" % i)
+            mirror = ref-ref[0]
+            sp = spikes(mirror)
+            shift_mirror = shift(mirror, sp)
+            plt.plot(norm_r, shift_mirror, label="Mirror at step %d" % i)
             # keep xlim and ylim across all plots by setting it based on min and max x and y values in mr
             if max(norm_r) > 2:
                 plt.xlim(xlim)
@@ -180,32 +204,6 @@ def plot_mirror_all(path, r, w0, mr, xlim=(0, 2), ylim=(0, 3e-5)):
         plt.ticklabel_format(axis="both", style="sci", scilimits=(0, 0))
         plt.tight_layout()
     plt.savefig(path + "/mirror/mirror_all", dpi=100)
-    plt.close()
-
-
-def plot_zernikes(path, zern, rmax, f_targ, n):
-    # each column should be a separate plot
-    for i in range(zern.shape[1]):
-        plt.plot(zern[:, i], label=f"Zernike Z{2*i},0")
-    plt.xlabel("Iteration")
-    plt.ylabel("Coefficient")
-
-    # ideal coefficients for the target mirror
-    # zm_t = create_initial_coeff(rmax, 2 * f_targ, n)
-
-    # create horizontal lines for each y value in zm_t
-    # for i, z in enumerate(zm_t):
-    #     # different colors for each line
-    #     plt.axhline(
-    #         z,
-    #         linestyle="--",
-    #         c=plt.cm.viridis(i / len(zm_t)),
-    #         label="Target Zernike Z%i0 = %.2e" % (i, z),
-    #     )
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(path + "/zernikes.png")
     plt.close()
 
 

@@ -24,7 +24,7 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = path.split("/")[0] + "/runs/para_axi" + dirname
+path = path.split("/")[0] + "/runs/para_axi_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
@@ -33,7 +33,7 @@ for s in subdir:
     os.makedirs(path + "/" + s)
 
 with open(path + "/time.txt", "w") as file:
-    file.write(str(sys.argv[0]))
+    file.write("Run script:" + str(sys.argv[0]))
 ################################################
 # Lens parameters
 f_targ = params["f_targ"]  # focal length of lens
@@ -154,7 +154,7 @@ while change > tol and i < steps:
     )
 
     # Updating the change to compare against tolerance
-    change = np.sum(np.abs(dfdz * lr))
+    change = np.max(np.abs(dfdz * lr))
     i += 1
 fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
@@ -193,6 +193,7 @@ plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr)
+plot_mirror_comp(path, r, w0, zm_t, mr, do_shift=True)
 
 pplots = time.time()
 # print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))

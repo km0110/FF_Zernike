@@ -33,7 +33,7 @@ for s in subdir:
     os.makedirs(path + "/" + s)
 
 with open(path + "/time.txt", "w") as file:
-    file.write(str(sys.argv[0]))
+    file.write("Run script:" + str(sys.argv[0]))
 ################################################
 # Lens parameters
 f_targ = params["f_targ"]  # focal length of lens
@@ -118,7 +118,7 @@ while change > tol and i < steps:
     ftf_r = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 
     # Calculating Integrals for Source
-    wt = weight(r, wR, zF, f_targ - dz, f_targ + dz, delta)
+    wt = weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
     Ir = calc_intensity(ftf_r)
     Ir = Ir / maxIt
     Irsq, IrIt, Itsq = int_pairs(r, zF, wt, Ir, It)
@@ -155,7 +155,7 @@ while change > tol and i < steps:
     )
 
     # Updating the change to compare against tolerance
-    change = np.sum(np.abs(dfdz * lr))
+    change = np.max(np.abs(dfdz * lr))
     i += 1
 fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
@@ -194,6 +194,7 @@ plot_fom_mu(path, figom, mu_val)
 print("3")
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr)
+plot_mirror_comp(path, r, w0, zm_t, mr, do_shift=True)
 
 pplots = time.time()
 # print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
