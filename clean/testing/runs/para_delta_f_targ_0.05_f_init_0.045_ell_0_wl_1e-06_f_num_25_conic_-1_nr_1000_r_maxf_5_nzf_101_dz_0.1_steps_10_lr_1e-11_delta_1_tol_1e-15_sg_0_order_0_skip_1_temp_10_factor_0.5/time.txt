@@ -1,3 +1,0 @@
-main.py
-Algorithm failed to converge in 10 steps 
-Total Time:0:00:01.388680

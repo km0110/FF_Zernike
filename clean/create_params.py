@@ -14,7 +14,7 @@ if len(sys.argv) != 2:
 
 # Lens parameters
 params = {
-    "lr": [1e-11,1e-12,1e-13],
+    "lr": [1e-11, 1e-12, 1e-13],
     "f_targ": 0.5,
     "f_init": 0.5,
     "nr": 4000,
@@ -32,7 +32,7 @@ params = {
     "tol": 1e-14,
     "sg": 0,
     "order": 0,
-    # "stop": 1000001,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    # "stop": 1000001,
     "temp": 10,
     "factor": 0.5,
 }
@@ -62,9 +62,11 @@ FILENAME_KEYS = {
 
 
 def create_filename(file_dir, param):
-    parts = [f"{abbrev}_{param[k]}" for k, abbrev in FILENAME_KEYS.items() if k in param]
+    parts = [
+        f"{abbrev}_{param[k]}" for k, abbrev in FILENAME_KEYS.items() if k in param
+    ]
     filename = "_".join(parts) + ".txt"
-    prefix = "delta" if param["delta"] else "exp"
+    prefix = "d" if param["delta"] else "e"
     return os.path.join(file_dir, f"{prefix}_{filename}")
 
 
