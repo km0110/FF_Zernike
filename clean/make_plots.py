@@ -82,12 +82,7 @@ filenames = [os.path.join(path, s) for s in data_names]
 phr_oa, phr_f, gr, mr, src, ir_oa, ir_f, psis = [
     np.genfromtxt(f, delimiter=",") for f in filenames
 ]
-pr2, rt, pt2 = np.genfromtxt(
-    os.path.join(path, "data.csv"), delimiter=",", unpack=True
-)
-
-figom = FOM(pr2, rt, pt2)
-mu_val = calc_mu(rt, pt2)
+pr2, rt, pt2 = np.genfromtxt(os.path.join(path, "data.csv"), delimiter=",", unpack=True)
 n_steps = len(gr)  # number of completed iterations
 
 # Ensure per-iteration subdirectories exist (safe to call on existing dirs)
@@ -100,7 +95,6 @@ pstart = time.time()
 
 plot_total_change(path, r, w0, gr, lr, wl, n_steps)
 plot_max_grad(path, gr)
-plot_fom_mu(path, figom, mu_val)
 plot_integrals(path, pr2, rt, pt2)
 plot_mirror_comp(path, r, w0, zm_t, mr)
 plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
