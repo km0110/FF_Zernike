@@ -14,7 +14,7 @@ if len(sys.argv) != 2:
 
 # Lens parameters
 params = {
-    "lr": [1e-11,1e-12,1e-13],
+    "lr": [1e-11, 1e-12, 1e-13],
     "f_targ": 0.5,
     "f_init": 0.5,
     "nr": 4000,
@@ -32,7 +32,7 @@ params = {
     "tol": 1e-14,
     "sg": 0,
     "order": 0,
-    # "stop": 1000001,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    # "stop": 1000001,
     "temp": 10,
     "factor": 0.5,
 }
@@ -45,12 +45,29 @@ def check_spot_size(param):
     return w0 > wR
 
 
+# Keys to include in filename (in order), with their abbreviations
+FILENAME_KEYS = {
+    "lr": "lr",
+    "f_targ": "ft",
+    "f_init": "fi",
+    "nr": "nr",
+    "r_maxf": "rmx",
+    "nzf": "nzf",
+    "dz": "dz",
+    "L": "L",
+    "steps": "st",
+    "skip": "sk",
+    "f_num": "fn",
+}
+
+
 def create_filename(file_dir, param):
-    filename = "_".join([f"{k}_{v}" for k, v in param.items()]) + ".txt"
-    if param["delta"]:
-        return file_dir + "/delta_" + filename
-    else:
-        return file_dir + "/exp_" + filename
+    parts = [
+        f"{abbrev}_{param[k]}" for k, abbrev in FILENAME_KEYS.items() if k in param
+    ]
+    filename = "_".join(parts) + ".txt"
+    prefix = "d" if param["delta"] else "e"
+    return os.path.join(file_dir, f"{prefix}_{filename}")
 
 
 def create_parameter_file(file_path, variables):

@@ -7,8 +7,6 @@
 import numpy as np
 from scipy.special import jv
 from scipy.integrate import simpson
-from numpy.fft import *
-from gaussian_beam import *
 import csv
 
 

@@ -1,11 +1,11 @@
 import sys
 import os
-from gaussian_beam import *
+import math
 from adjoint_intensity import *
-from plot import *
 import time
 import shutil
 from datetime import timedelta
+from plot import plot_fom_mu
 
 
 def create_axiparabola(r, R, L, f0, taylor=False):
@@ -170,69 +170,16 @@ else:
     )
 
 print(output)
-
-# write to output file how long it took to run
-with open(path + "/time.txt", "w") as file:
-    file.write(output)
-
-################################################
-# create plots
-phr_oa, phr_f, gr, mr, src, ir_oa, ir_f, psis = [
-    np.genfromtxt(f, delimiter=",") for f in filenames
-]
 pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
 figom = FOM(pr2, rt, pt2)
 mu_val = calc_mu(rt, pt2)
-print("START PLOTTING")
-pstart = time.time()
-
-plot_total_change(path, r, w0, gr, lr, wl, i)
-print("1")
-plot_max_grad(path, gr)
-print("2")
 plot_fom_mu(path, figom, mu_val)
-print("3")
-plot_integrals(path, pr2, rt, pt2)
-plot_mirror_comp(path, r, w0, zm_t, mr)
-plot_mirror_comp(path, r, w0, zm_t, mr, do_shift=True)
 
-# plot_zernikes(path, zern, rmax, f_targ, n)
-
-pplots = time.time()
-# print("Plotting Time:" + str(timedelta(seconds=pplots - pstart)))
-plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
-
-# Plotting each iteration phi_r and phi_t, the gradient and the source
-plot_phi_t_phi_r_f(path, phr_f, r, w0, ftf_t, fl, skip)
-# prft = time.time()
-# print("PRPT_F Time:" + str(timedelta(seconds=prft - pplots)))
-
-plot_phi_t_phi_r_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
-# proat = time.time()
-# print("PRPT_OA Time:" + str(timedelta(seconds=proat - prft)))
-
-plot_I_OA(path, ir_oa, zF, f_targ, It[0, :], skip)
-
-plot_I_f(path, ir_f, r, w0, It[:, fl], skip)
-
-# plot_da_vs_grad(path, gr, r, w0, zern, n, skip)
-# pdzt = time.time()
-# print("G Time:" + str(timedelta(seconds=pdzt - proat)))
-
-
-# plot_psi(path, psis, r, w0, skip)
-# ps = time.time()
-# print("Psi Time:" + str(timedelta(seconds=ps - pdzt)))
-
-# plot_source(path, src, zF, f_targ, skip)
-plot_psi_and_source(path, psis, r, w0, src, zF, f_targ, skip)
-pend = time.time()
-
-print("Total Time:" + str(timedelta(seconds=pend - pstart)))
-
-##add to time.txt the time it took to plot
+# write to output file how long it took to run
 with open(path + "/time.txt", "a") as file:
-    file.write("\nPlotting Time:" + str(timedelta(seconds=pend - pstart)))
+    file.write("\n" + output)
+
 
 # move the parameter file to the run directory
 shutil.move(sys.argv[1], path)
+print("Finished running main function")
