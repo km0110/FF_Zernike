@@ -255,7 +255,7 @@ def plot_phi_f(path, phr_f, r, w0, ftf_t, fl, steps, fontsize=26):
 
                 plt.plot(r / w0, ref, label=r"$\phi_R(z=f)$")
                 plt.title("Step: %d" % i)
-                plt.xlim((0, 1))
+                plt.xlim((0, 0.2))
                 plt.ylabel(r"$\phi$")
                 plt.xlabel(r"$r/w_0$")
                 plt.legend()
@@ -284,7 +284,7 @@ def plot_phi_f_over_iterations(path, phr_f, r, w0, ftf_t, fl, steps=None, fontsi
                 c=line_colors[i],
                 label=r"$\phi_R$ step %d" % num,
             )
-        plt.xlim((0, 1))
+        plt.xlim((0, 0.2))
         plt.ylabel(r"$\phi$")
         plt.xlabel(r"$r/w_0$")
         plt.legend()
@@ -304,7 +304,7 @@ def plot_I_f(path, ir_f, r, w0, it_f, steps, fontsize=26):
 
                 plt.plot(r / w0, ref, label=r"$I_R(z=f)$")
                 plt.title("Step: %d" % i)
-                plt.xlim((0, 1))
+                plt.xlim((0, 0.2))
                 plt.ylabel(r"$\phi$")
                 plt.xlabel(r"$r/w_0$")
                 plt.legend()
@@ -333,7 +333,7 @@ def plot_I_f_over_iterations(path, ir_f, r, w0, it_f, steps=None, fontsize=26):
                 c=line_colors[i],
                 label=r"$I_R$ step %d" % num,
             )
-        plt.xlim((0, 1))
+        plt.xlim((0, 0.2))
         plt.ylabel("Focal-plane Intensity")
         plt.xlabel(r"$r/w_0$")
         plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
