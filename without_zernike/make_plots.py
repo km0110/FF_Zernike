@@ -52,6 +52,7 @@ nr = params["nr"]
 dz = params["dz"]
 nzf = params["nzf"]
 L = params.get("L", 0)
+print(L)
 zF = np.linspace(f_targ - dz, f_targ + L + dz, nzf)
 fl = len(zF) // 2
 
@@ -62,52 +63,82 @@ skip = params["skip"]
 [r, k] = DHTarrays(nr, rmax, ell)
 [T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
 
+power = 40 if 'axi' in path else 2
 # Target field and intensity (fast recompute — no disk I/O needed)
-phi_I = np.exp(-((r / w0) ** 2))
-zm_t = create_starting_optic(r, 2 * f_targ)
+phi_I = np.exp(-((r / w0) ** power))
+zm_t = create_axiparabola(r, w0, L, f_targ) if 'axi' in path else create_starting_optic(r, 2 * f_targ)
 ftf_t = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_t)
 It = calc_intensity(ftf_t)
 
 # ── Load CSV data ──────────────────────────────────────────────────────────────
-data_names = [
-    "phi_r_OA.csv",
-    "phi_r_focus.csv",
-    "gradient.csv",
-    "mirror.csv",
-    "source.csv",
-    "int_oa.csv",
-    "int_f.csv",
-    "psi.csv",
-]
-filenames = [os.path.join(path, s) for s in data_names]
-phr_oa, phr_f, gr, mr, src, ir_oa, ir_f, psis = [
-    np.genfromtxt(f, delimiter=",") for f in filenames
-]
-pr2, rt, pt2 = np.genfromtxt(os.path.join(path, "data.csv"), delimiter=",", unpack=True)
-n_steps = len(gr)  # number of completed iterations
+is_int = 'int' in os.path.basename(path)
+
+if is_int:
+    data_names = [
+        "gradient.csv",
+        "mirror.csv",
+        "source.csv",
+        "int_oa.csv",
+        "int_f.csv",
+        "psi.csv",
+    ]
+    filenames = [os.path.join(path, s) for s in data_names]
+    gr, mr, src, ir_oa, ir_f, psis = [
+        np.genfromtxt(f, delimiter=",") for f in filenames
+    ]
+    phr_oa, phr_f = None, None
+else:
+    data_names = [
+        "phi_r_OA.csv",
+        "phi_r_focus.csv",
+        "gradient.csv",
+        "mirror.csv",
+        "source.csv",
+        "int_oa.csv",
+        "int_f.csv",
+        "psi.csv",
+    ]
+    filenames = [os.path.join(path, s) for s in data_names]
+    phr_oa, phr_f, gr, mr, src, ir_oa, ir_f, psis = [
+        np.genfromtxt(f, delimiter=",") for f in filenames
+    ]
 
 # Ensure per-iteration subdirectories exist (safe to call on existing dirs)
-for subdir in ["pr_f", "pr_oa", "I_OA", "I_f", "g", "mirror", "psi_S"]:
+subdirs = ["I_OA", "I_f", "g", "mirror", "psi_S"]
+if not is_int:
+    subdirs += ["pr_f", "pr_oa"]
+for subdir in subdirs:
     os.makedirs(os.path.join(path, subdir), exist_ok=True)
 
+rr, rt, tt = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
+figom = FOM(rr, rt, tt)
+mu_val = calc_mu(rt, tt)
+plot_fom_mu(path, figom, mu_val)
+plot_percent_change_mu(path, mu_val)
 # ── Generate plots ─────────────────────────────────────────────────────────────
 print("Generating plots...")
 pstart = time.time()
-
-# plot_total_change(path, r, w0, gr, lr, wl, n_steps)
+n_steps = len(gr)  # number of completed iterations
+st=[100,500,4999]
+# st=None
+plot_total_change(path, r, w0, gr, lr, wl, n_steps)
 # plot_max_grad(path, gr)
 # plot_integrals(path, pr2, rt, pt2)
-plot_mirror_comp(path, r, w0, zm_t, mr)
 plot_mirror_comp(path, r, w0, zm_t, mr, do_shift=True)
 # plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
-# plot_phi_f(path, phr_f, r, w0, ftf_t, fl, skip)
-plot_phi_f_over_iterations(path, phr_f, r, w0, ftf_t, fl)
-# plot_phi_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
-plot_phi_OA_over_iterations(path, phr_oa, zF, f_targ, ftf_t)
+if not is_int:
+    plot_phi_f_over_iterations(path, phr_f, r, w0, np.real(ftf_t), fl, steps=st)
+    plot_phi_OA_over_iterations(path, phr_oa, zF, f_targ, np.real(ftf_t), steps=st)
+    # plot_phi_f(path, phr_f, r, w0, ftf_t, fl, skip)
+    # plot_phi_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
+
 # plot_I_OA(path, ir_oa, zF, f_targ, It[0, :], skip)
-plot_I_OA_over_iterations(path, ir_oa, zF, f_targ, It[0, :])
+plot_I_OA_over_iterations(path, ir_oa, zF, f_targ, It[0, :],steps=st)
 # plot_I_f(path, ir_f, r, w0, It[:, fl], skip)
-plot_I_f_over_iterations(path, ir_f, r, w0, It[:, fl])
+plot_I_f_over_iterations(path, ir_f, r, w0, It[:, fl],steps=st)
+plot_step0_intensity(path, ir_oa, ir_f, zF, f_targ, r, w0, It, fl)
+if not is_int:
+    plot_step0_phi(path, phr_oa, phr_f, zF, f_targ, r, w0, np.real(ftf_t), fl)
 # plot_psi_and_source(path, psis, r, w0, src, zF, f_targ, skip)
 
 pend = time.time()

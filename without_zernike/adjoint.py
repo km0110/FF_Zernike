@@ -17,6 +17,12 @@ def create_starting_optic(r, R, k=-1):
     z = r * r / (R + np.sqrt(R * R - (k + 1) * r * r))
     return z
 
+def create_axiparabola(r, R, L, f0, taylor=False):
+    if taylor:
+        sag = r**2 / (4 * f0) * (1 - L / (2 * f0) * (r / R) ** 2)
+    else:
+        sag = R**2 / (4 * L) * np.log(1 + L / f0 * (r / R) ** 2)
+    return sag
 
 # def calc_Z(rho, num):
 #     rho = np.asarray(rho)

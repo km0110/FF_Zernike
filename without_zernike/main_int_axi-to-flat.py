@@ -6,7 +6,7 @@ import adjoint_intensity as adj
 import time
 import shutil
 from datetime import timedelta
-from plot import plot_fom_mu
+from plot import plot_fom_mu, plot_percent_change_mu
 
 
 def create_axiparabola(r, R, L, f0, taylor=False):
@@ -205,10 +205,11 @@ else:
     )
 
 print(output)
-pr2, rt, pt2 = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
-figom = adj.FOM(pr2, rt, pt2)
-mu_val = adj.calc_mu(rt, pt2)
+rr, rt, tt = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
+figom = adj.FOM(rr, rt, tt)
+mu_val = adj.calc_mu(rt, tt)
 plot_fom_mu(path, figom, mu_val)
+plot_percent_change_mu(path, mu_val)
 
 # write to output file how long it took to run
 with open(path + "/time.txt", "a") as file:

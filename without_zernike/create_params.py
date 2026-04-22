@@ -14,17 +14,17 @@ if len(sys.argv) != 2:
 
 # Lens parameters
 params = {
-    "lr": [1e-11, 1e-12, 1e-13],
-    "f_targ": 0.5,
-    "f_init": 0.5,
-    "nr": 4000,
-    "r_maxf": 1.3,
-    "nzf": 1001,
-    "dz": 5e-2,
-    "L": 5e-2,
-    "steps": 100,
-    "skip": 10,
-    "f_num": 20,
+    "lr": 1e-10,
+    "f_targ": 0.05,
+    "f_init": 0.045,
+    "nr": 1000,
+    "r_maxf": 5,
+    "nzf": 501,
+    "dz": 2e-2,
+    "L": 0,
+    "steps": 1000,
+    "skip": 1,
+    "f_num": 25,
     "ell": 0,
     "wl": 1e-6,
     "conic": -1,
@@ -38,11 +38,31 @@ params = {
 }
 
 
+def check_z_resolution(param):
+    # check that there is enough longitudinal resolution
+    wl = param["wl"]
+    k0 = 2 * np.pi / wl
+    nr = param["nr"]
+    ell = param.get("ell", 0)
+    w0 = param["f_init"] / (2 * param["f_num"])
+    rmax = param["r_maxf"] * w0
+    Zeroes = np.genfromtxt("BesselZeroes" + str(ell) + ".csv")
+    kmax = Zeroes[nr - 1] / rmax
+    L = param.get("L", 0)
+    if isinstance(L, list):
+        L = max(L)
+    dz_step = (L + 2 * param["dz"]) / (param["nzf"] - 1)
+    z_res = 4 * np.pi * k0 / kmax**2
+    print(f"dz step: {dz_step:.3e}, z_res: {z_res:.3e}")
+    assert dz_step < z_res, "Need more resolution in z, increase number of points"
+
+
 def check_spot_size(param):
     # This is to check that the spot size is greater than the diffraction limited spot size, wR
     wR = 2 / np.pi * param["f_num"] * param["wl"]
     w0 = param["f_init"] / (2 * param["f_num"])
-    return w0 > wR
+    print(f"w0: {w0:.3e}, wR: {wR:.3e}")
+    assert w0 > wR, "Spot size is too small, adjust f number"
 
 
 # Keys to include in filename (in order), with their abbreviations
@@ -98,16 +118,11 @@ def create_run_files(file_dir, param):
 
 
 def main():
-    if check_spot_size(params):
-        dirname = sys.argv[1]
-        os.makedirs(dirname, exist_ok=True)
-        create_run_files(dirname, params)
-    else:
-        print("Spot size is too small for the given parameters")
-    # dirname = sys.argv[1]
-    # os.makedirs(dirname, exist_ok=True)
-    # create_run_files(dirname, params)
-
+    check_z_resolution(params)
+    check_spot_size(params)
+    dirname = sys.argv[1]
+    os.makedirs(dirname, exist_ok=True)
+    create_run_files(dirname, params)
 
 if __name__ == "__main__":
     main()
