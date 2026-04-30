@@ -5,6 +5,7 @@
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib.colors import SymLogNorm
 import numpy as np
 
 # from adjoint import create_initial_coeff, calc_Z
@@ -1117,3 +1118,80 @@ def plot_psi_and_source(path, psi, r, w0, S, z, f, skip, fontsize=30):
                 plt.subplots_adjust(left=0.1, right=0.97, top=0.88, bottom=0.12)
                 plt.savefig(path + "/psi_S/psi_S_%d" % i, dpi=100)
                 plt.close()
+
+
+def plot_gradient(path, gradient, r, w0, crop_rmax=2, linthresh=10, linscale=1.0, fontsize=26):
+    """Plot the gradient history as a 2D colormap over radial position and iterations.
+
+    Always saves a full-range linear plot and a SymLogNorm version. When
+    ``max(r/w0) > crop_rmax``, also saves cropped versions zoomed to
+    ``r/w0 in [0, crop_rmax]``. Saves to ``gradient_full.pdf``,
+    ``gradient_full_symlognorm.pdf``, and (when cropped) ``gradient_zoom.pdf``,
+    ``gradient_zoom_symlognorm.pdf``.
+
+    Parameters
+    ----------
+    path : str
+        Output directory where PDFs will be saved.
+    gradient : np.ndarray, shape (n_iters, n_r)
+        Gradient history; rows are saved iterations, columns are radial points.
+    r : np.ndarray, shape (n_r,)
+        Radial coordinate array (metres).
+    w0 : float
+        Beam waist radius (metres) used to normalise the radial axis.
+    crop_rmax : float, optional
+        Upper r/w0 limit for the zoomed plot. Only used when ``max(r/w0) > crop_rmax``.
+        Default is 2.
+    linthresh : float, optional
+        Linear threshold for SymLogNorm. Default is 10.
+    linscale : float, optional
+        Linear scale for SymLogNorm. Default is 1.0.
+    fontsize : int, optional
+        Base font size for all text elements. Default is 26.
+
+    Returns
+    -------
+    None
+        Figures are saved to disk and the pyplot state is closed.
+    """
+    with plt.rc_context({"font.size": fontsize}):
+        rmax = np.max(r / w0)
+        n_iters, n_r = gradient.shape
+
+        def _draw(data, n_cols, r_hi, x_fmt, use_symlognorm):
+            vabs = np.max(np.abs(data))
+            if use_symlognorm:
+                norm = SymLogNorm(linthresh=linthresh, linscale=linscale, vmin=-vabs, vmax=vabs)
+                plt.imshow(data, origin="lower", aspect="auto", cmap="RdBu_r", norm=norm)
+            else:
+                plt.imshow(data, origin="lower", aspect="auto", cmap="RdBu_r", vmin=-vabs, vmax=vabs)
+            x_ticks = np.linspace(0, n_cols, 6)
+            x_labels = np.linspace(0, r_hi, 6)
+            y_ticks = np.linspace(0, n_iters, 11)
+            y_labels = np.linspace(0, n_iters, 11)
+            plt.xticks(x_ticks, [x_fmt.format(x) for x in x_labels])
+            plt.yticks(y_ticks, [f"{y:.0f}" for y in y_labels])
+            plt.xlabel(r"$r/w_0$")
+            plt.ylabel("Iterations")
+            plt.colorbar()
+            plt.tight_layout()
+
+        _draw(gradient, n_r, rmax, "{:.0f}", use_symlognorm=False)
+        plt.savefig(path + "/gradient_full.pdf")
+        plt.close()
+
+        _draw(gradient, n_r, rmax, "{:.0f}", use_symlognorm=True)
+        plt.savefig(path + "/gradient_full_symlognorm.pdf")
+        plt.close()
+
+        if rmax > crop_rmax:
+            crop_idx = int(round(crop_rmax / rmax * n_r))
+            cropped = gradient[:, :crop_idx]
+
+            _draw(cropped, crop_idx, crop_rmax, "{:.1f}", use_symlognorm=False)
+            plt.savefig(path + "/gradient_zoom.pdf")
+            plt.close()
+
+            _draw(cropped, crop_idx, crop_rmax, "{:.1f}", use_symlognorm=True)
+            plt.savefig(path + "/gradient_zoom_symlognorm.pdf")
+            plt.close()

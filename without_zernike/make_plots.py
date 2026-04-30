@@ -14,8 +14,8 @@ import glob
 import time
 import numpy as np
 from datetime import timedelta
-from adjoint import *
-from plot import *
+import adjoint as adj
+import plot as plots
 
 if len(sys.argv) != 2:
     print("Usage: python make_plots.py <path to run directory>")
@@ -37,7 +37,7 @@ if not param_files:
 param_file = param_files[0]
 
 # ── Reconstruct parameters and derived quantities ──────────────────────────────
-params = initialize_variables_from_file(param_file)
+params = adj.initialize_variables_from_file(param_file)
 
 f_targ = params["f_targ"]
 f_init = params["f_init"]
@@ -60,15 +60,15 @@ lr = params["lr"]
 skip = params["skip"]
 
 # Hankel transform arrays
-[r, k] = DHTarrays(nr, rmax, ell)
-[T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
+[r, k] = adj.DHTarrays(nr, rmax, ell)
+[T_R2K, T_K2R] = adj.DHTtransformMatrix(nr, rmax, ell)
 
 power = 40 if 'axi' in path else 2
 # Target field and intensity (fast recompute — no disk I/O needed)
 phi_I = np.exp(-((r / w0) ** power))
-zm_t = create_axiparabola(r, w0, L, f_targ) if 'axi' in path else create_starting_optic(r, 2 * f_targ)
-ftf_t = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_t)
-It = calc_intensity(ftf_t)
+zm_t = adj.create_axiparabola(r, w0, L, f_targ) if 'axi' in path else adj.create_starting_optic(r, 2 * f_targ)
+ftf_t = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_t)
+It = adj.calc_intensity(ftf_t)
 
 # ── Load CSV data ──────────────────────────────────────────────────────────────
 is_int = 'int' in os.path.basename(path)
@@ -111,34 +111,35 @@ for subdir in subdirs:
     os.makedirs(os.path.join(path, subdir), exist_ok=True)
 
 rr, rt, tt = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
-figom = FOM(rr, rt, tt)
-mu_val = calc_mu(rt, tt)
-plot_fom_mu(path, figom, mu_val)
-plot_percent_change_mu(path, mu_val)
+figom = adj.FOM(rr, rt, tt)
+mu_val = adj.calc_mu(rt, tt)
+plots.plot_fom_mu(path, figom, mu_val)
+plots.plot_percent_change_mu(path, mu_val)
 # ── Generate plots ─────────────────────────────────────────────────────────────
 print("Generating plots...")
 pstart = time.time()
 n_steps = len(gr)  # number of completed iterations
 st=[100,500,4999]
 # st=None
-plot_total_change(path, r, w0, gr, lr, wl, n_steps)
+plots.plot_total_change(path, r, w0, gr, lr, wl, n_steps)
+plots.plot_gradient(path, gr, r, w0)
 # plot_max_grad(path, gr)
 # plot_integrals(path, pr2, rt, pt2)
-plot_mirror_comp(path, r, w0, zm_t, mr, do_shift=True)
+plots.plot_mirror_comp(path, r, w0, zm_t, mr, do_shift=True)
 # plot_mirror_comp_each(path, r, w0, zm_t, mr, skip)
 if not is_int:
-    plot_phi_f_over_iterations(path, phr_f, r, w0, np.real(ftf_t), fl, steps=st)
-    plot_phi_OA_over_iterations(path, phr_oa, zF, f_targ, np.real(ftf_t), steps=st)
+    plots.plot_phi_f_over_iterations(path, phr_f, r, w0, np.real(ftf_t), fl, steps=st)
+    plots.plot_phi_OA_over_iterations(path, phr_oa, zF, f_targ, np.real(ftf_t), steps=st)
     # plot_phi_f(path, phr_f, r, w0, ftf_t, fl, skip)
     # plot_phi_OA(path, phr_oa, zF, f_targ, ftf_t, skip)
 
 # plot_I_OA(path, ir_oa, zF, f_targ, It[0, :], skip)
-plot_I_OA_over_iterations(path, ir_oa, zF, f_targ, It[0, :],steps=st)
+plots.plot_I_OA_over_iterations(path, ir_oa, zF, f_targ, It[0, :],steps=st)
 # plot_I_f(path, ir_f, r, w0, It[:, fl], skip)
-plot_I_f_over_iterations(path, ir_f, r, w0, It[:, fl],steps=st)
-plot_step0_intensity(path, ir_oa, ir_f, zF, f_targ, r, w0, It, fl)
+plots.plot_I_f_over_iterations(path, ir_f, r, w0, It[:, fl],steps=st)
+plots.plot_step0_intensity(path, ir_oa, ir_f, zF, f_targ, r, w0, It, fl)
 if not is_int:
-    plot_step0_phi(path, phr_oa, phr_f, zF, f_targ, r, w0, np.real(ftf_t), fl)
+    plots.plot_step0_phi(path, phr_oa, phr_f, zF, f_targ, r, w0, np.real(ftf_t), fl)
 # plot_psi_and_source(path, psis, r, w0, src, zF, f_targ, skip)
 
 pend = time.time()
