@@ -1,0 +1,181 @@
+import sys
+import os
+import math
+import numpy as np
+import adjoint as adj
+from plot import plot_fom_mu, plot_percent_change_mu
+import time
+import shutil
+from datetime import timedelta
+
+
+def supergaussian_2d(amp, r, z, w_r, L, f, n):
+    w_z = L / 2
+    return (
+        amp
+        * np.exp(-r[:, np.newaxis] ** n / w_r**n)
+        * np.exp(-((z - (f + w_z)) ** n) / w_z**n)
+    )
+
+
+if len(sys.argv) != 2:
+    print("Usage: python fom.py <path to parameter file>")
+    sys.exit(1)
+
+# Create the directory for the run
+path = sys.argv[1]
+params = adj.initialize_variables_from_file(sys.argv[1])
+dirname = (path.split("/")[-1])[:-4]
+path = path.split("/")[0] + "/runs/para2flat_" + dirname
+if os.path.exists(path):
+    shutil.rmtree(path)
+os.makedirs(path)  # Calculate all initial parameters from the input file:
+subdir = ["phr_f", "pr_oa", "pr_oa_I", "g", "psi", "mirror"]
+for s in subdir:
+    os.makedirs(path + "/" + s)
+
+with open(path + "/time.txt", "w") as file:
+    file.write(str(sys.argv[0]))
+################################################
+# Lens parameters
+f_targ = params["f_targ"]  # focal length of lens
+ell = 0  # order of Bessel J function
+f_init = params["f_init"]  # initial mirror focal length
+conic = params["conic"]
+
+# Beam Parameters
+wl = params["wl"]  # wavelength
+k0 = 2 * np.pi / wl  # k=2*pi/wavelength
+fn = params["f_num"]  # f#
+w0 = f_targ / (2 * fn)  # initial spot size
+rmax = params["r_maxf"] * w0  # the max value of r
+nr = params["nr"]  # number of points in r
+zR = np.pi * w0**2 / wl  # Initial rayleigh length
+wR = 2 / np.pi * fn * wl  # Diffraction limited spot size
+L = params["L"]
+
+# Distance parameters
+dz = params["dz"]
+nzf = params["nzf"]
+zi = f_targ - dz
+zf = f_targ + L + dz
+zF = np.linspace(zi, zf, nzf)
+fl = len(zF) // 2  # focal length index
+
+# Guess parameters
+OoM = math.floor(math.log(w0**2, 10))  # order of magnitude of w0^2
+w_guess = 10**OoM  # guess for the spot size
+steps = params["steps"]  # max number of steps algorithm is allowed
+lr = params["lr"]  # learning rate
+tol = params["tol"]  # tolerance
+delta = params["delta"]  # weighting function in r
+n = params["n"]
+skip = params["skip"]
+stop = params["stop"]
+################################################
+print(w0)
+# Hankel
+[r, k] = adj.DHTarrays(nr, rmax, ell)
+[T_R2K, T_K2R] = adj.DHTtransformMatrix(nr, rmax, ell)
+
+# Initial propagation
+phi_I = np.exp(-((r / w0) ** 40))
+ftf_t = supergaussian_2d(100, r, zF, 200e-6, L, f_targ, 16)
+# save plot of ftf_t on axis
+# print("Plotting ftf_t")
+# plt.figure(figsize=(11.52, 6.56), dpi=100)
+# plt.plot((zF - f_targ) * 100, np.real(ftf_t[0, :]))
+# plt.savefig("check")
+# plt.close()
+# print("Done")
+a_n = adj.create_initial_coeff(rmax, 2 * f_init, n)
+print(a_n)
+rho = r / rmax
+Z_fit = adj.calc_Z(rho, n)
+Z_plus = adj.calc_Z_plus(Z_fit)
+
+zm_r = adj.generate_optic(a_n, Z_fit)  # initial mirror
+
+data_names = [
+    "phi_r_OA.csv",
+    "phi_r_focus.csv",
+    "gradient.csv",
+    "mirror.csv",
+    "source.csv",
+    "zernike.csv",
+]
+filenames = [path + "/" + s for s in data_names]
+
+# Running the main algorithm loop
+change = 1000
+i = 0
+start_time = time.time()
+data = []
+break_flag = False
+while change > tol and i < steps:
+    if i % 1 == 0:
+        print("MAIN STEP %d \t Grad:%.3e" % (i, change))
+    # Forward propagation
+    ftf_r = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r, k0)
+
+    # Calculating Integrals for Source
+    pR, pT = adj.weighted_phi(r, wR, zF, f_targ - dz, f_targ + L + dz, ftf_r, ftf_t, delta)
+    prsq, prpt, ptsq = adj.int_pairs(
+        r, zF, pR, pT, ftf_r, ftf_t
+    )  # phi_r_sq, phi_r_phi_t, phi_t_sq
+    data.append([prsq, prpt, ptsq])
+
+    # Calculating S and psi
+    s = adj.S(pR, pT, prpt, ptsq)
+    s_hat = T_R2K @ s
+    psi_hat = adj.calc_psi_hat(k, k0, zF, s_hat)
+    psi = T_K2R @ psi_hat
+    # Calculating the gradient and updating the mirror
+    dfdz = np.real(adj.gradient(k0, phi_I, psi, a_n, Z_fit))
+    # dfda = dfdz @ Z_fit
+    dfda = Z_plus @ dfdz
+    Z_plus = adj.calc_Z_plus(Z_fit)
+    a_n = adj.step(dfda, lr, a_n)
+    zm_r = adj.generate_optic(a_n, Z_fit)
+
+    # Writing to files
+    phi_r_oa = np.real(ftf_r[0, :])
+    phi_r_f = np.real(ftf_r[:, fl])
+    adj.write_to_files(filenames, [phi_r_oa, phi_r_f, dfdz, zm_r, np.real(psi), dfda])
+
+    # Updating the change to compare against tolerance
+    change = np.sum(np.abs(dfda * lr))
+    i += 1
+    mu = adj.calc_mu(prpt, ptsq)
+    if i > stop and mu < 0.5:
+        break_flag = True
+        break
+
+fr = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r, k0)
+np.savetxt(path + "/data.csv", data, delimiter=",")
+final_time = time.time()
+
+if i < steps and not break_flag:
+    output = "Algorithm converged in %d steps \nTotal Time:" % (i) + str(
+        timedelta(seconds=final_time - start_time)
+    )
+else:
+    output = "Algorithm failed to converge in %d steps \nTotal Time:" % (i) + str(
+        timedelta(seconds=final_time - start_time)
+    )
+
+print(output)
+rr, rt, tt = np.genfromtxt(path + "/data.csv", delimiter=",", unpack=True)
+figom = adj.FOM(rr, rt, tt)
+mu_val = adj.calc_mu(rt, tt)
+plot_fom_mu(path, figom, mu_val)
+plot_percent_change_mu(path, mu_val)
+
+# write to output file how long it took to run
+with open(path + "/time.txt", "a") as file:
+    file.write("\n" + output)
+
+
+# move the parameter file to the run directory
+shutil.move(sys.argv[1], path)
+print("Finished running main function")
