@@ -1,0 +1,65 @@
+0.012750000000000001
+=== restart 1/1 (seed=48) ===
+  [seed 48] GEN 0 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.524e-09  overall best:2.524e-09  sigma=3.27e-01
+  [seed 48] GEN 1 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.252e-10  overall best:2.252e-10  sigma=4.39e-01
+  [seed 48] GEN 2 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:5.575e-11  overall best:5.575e-11  sigma=5.50e-01
+  [seed 48] GEN 3 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.765e-11  overall best:1.765e-11  sigma=7.28e-01
+  [seed 48] GEN 4 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.239e-11  overall best:1.765e-11  sigma=8.12e-01
+  [seed 48] GEN 5 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.381e-11  overall best:1.381e-11  sigma=9.04e-01
+  [seed 48] GEN 6 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.919e-11  overall best:1.381e-11  sigma=1.05e+00
+  [seed 48] GEN 7 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.136e-11  overall best:1.381e-11  sigma=9.15e-01
+  [seed 48] GEN 8 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.588e-11  overall best:1.381e-11  sigma=8.36e-01
+  [seed 48] GEN 9 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.677e-11  overall best:1.381e-11  sigma=7.30e-01
+  [seed 48] GEN 10 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.278e-11  overall best:1.278e-11  sigma=7.00e-01
+  [seed 48] GEN 11 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.045e-11  overall best:1.045e-11  sigma=7.07e-01
+  [seed 48] GEN 12 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.109e-11  overall best:1.045e-11  sigma=6.49e-01
+  [seed 48] GEN 13 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.116e-11  overall best:1.045e-11  sigma=5.98e-01
+  [seed 48] GEN 14 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.033e-11  overall best:1.033e-11  sigma=7.11e-01
+  [seed 48] GEN 15 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:7.717e-12  overall best:7.717e-12  sigma=7.88e-01
+  [seed 48] GEN 16 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:6.379e-12  overall best:6.379e-12  sigma=9.33e-01
+  [seed 48] GEN 17 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:5.962e-12  overall best:5.962e-12  sigma=9.78e-01
+  [seed 48] GEN 18 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:4.113e-12  overall best:4.113e-12  sigma=1.17e+00
+  [seed 48] GEN 19 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:3.115e-12  overall best:3.115e-12  sigma=1.35e+00
+  [seed 48] GEN 20 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.453e-12  overall best:2.453e-12  sigma=1.41e+00
+  [seed 48] GEN 21 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.806e-12  overall best:1.806e-12  sigma=1.50e+00
+  [seed 48] GEN 22 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:6.277e-13  overall best:6.277e-13  sigma=1.92e+00
+  [seed 48] GEN 23 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:5.066e-13  overall best:5.066e-13  sigma=2.38e+00
+  [seed 48] GEN 24 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.229e-13  overall best:2.229e-13  sigma=2.79e+00
+  [seed 48] GEN 25 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.155e-13  overall best:1.155e-13  sigma=3.27e+00
+  [seed 48] GEN 26 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:4.461e-13  overall best:1.155e-13  sigma=3.35e+00
+  [seed 48] GEN 27 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.468e-13  overall best:1.155e-13  sigma=4.06e+00
+  [seed 48] GEN 28 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.036e-13  overall best:1.155e-13  sigma=5.13e+00
+  [seed 48] GEN 29 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.735e-09  overall best:1.155e-13  sigma=5.91e+00
+  [seed 48] GEN 30 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.608e-13  overall best:1.155e-13  sigma=5.85e+00
+  [seed 48] GEN 31 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.016e-13  overall best:1.016e-13  sigma=5.49e+00
+  [seed 48] GEN 32 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.137e-13  overall best:1.016e-13  sigma=7.62e+00
+  [seed 48] GEN 33 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.516e-10  overall best:1.016e-13  sigma=9.85e+00
+  [seed 48] GEN 34 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.273e-11  overall best:1.016e-13  sigma=1.03e+01
+  [seed 48] GEN 35 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.492e-13  overall best:1.016e-13  sigma=8.93e+00
+  [seed 48] GEN 36 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.581e-13  overall best:1.016e-13  sigma=7.32e+00
+  [seed 48] GEN 37 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.269e-13  overall best:1.016e-13  sigma=6.76e+00
+  [seed 48] GEN 38 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.036e-13  overall best:1.016e-13  sigma=6.99e+00
+  [seed 48] GEN 39 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.996e-13  overall best:1.016e-13  sigma=6.42e+00
+  [seed 48] GEN 40 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.044e-13  overall best:1.016e-13  sigma=5.87e+00
+  [seed 48] GEN 41 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.009e-13  overall best:1.009e-13  sigma=6.06e+00
+  [seed 48] GEN 42 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.080e-13  overall best:1.009e-13  sigma=5.40e+00
+  [seed 48] GEN 43 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.068e-13  overall best:1.009e-13  sigma=4.86e+00
+  [seed 48] GEN 44 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.462e-14  overall best:9.462e-14  sigma=4.46e+00
+  [seed 48] GEN 45 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.127e-13  overall best:9.462e-14  sigma=3.47e+00
+  [seed 48] GEN 46 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.003e-13  overall best:9.462e-14  sigma=2.68e+00
+  [seed 48] GEN 47 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.027e-13  overall best:9.462e-14  sigma=2.38e+00
+  [seed 48] GEN 48 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.026e-13  overall best:9.462e-14  sigma=2.35e+00
+  [seed 48] GEN 49 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.568e-14  overall best:9.462e-14  sigma=2.41e+00
+  [seed 48] GEN 50 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.015e-13  overall best:9.462e-14  sigma=2.34e+00
+  [seed 48] GEN 51 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.827e-14  overall best:9.462e-14  sigma=2.18e+00
+  [seed 48] GEN 52 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.315e-14  overall best:9.315e-14  sigma=2.82e+00
+  [seed 48] GEN 53 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.153e-14  overall best:9.153e-14  sigma=3.07e+00
+  [seed 48] GEN 54 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.127e-14  overall best:9.127e-14  sigma=3.81e+00
+  [seed 48] GEN 55 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.170e-14  overall best:9.127e-14  sigma=3.68e+00
+  [seed 48] GEN 56 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:8.872e-14  overall best:8.872e-14  sigma=3.19e+00
+  [seed 48] GEN 57 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:9.466e-14  overall best:8.872e-14  sigma=2.90e+00
+  [seed 48] GEN 58 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:8.811e-14  overall best:8.811e-14  sigma=2.74e+00
+  [seed 48] GEN 59 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:8.897e-14  overall best:8.811e-14  sigma=2.40e+00
+1 restarts finished. Winning restart: seed=48, best cost=FOM/Itsq+lam*|1-mu|=8.811e-14 
+Total Time:0:05:55.728247
+Finished running main function

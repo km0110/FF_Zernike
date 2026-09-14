@@ -1,0 +1,2 @@
+restart	seed	generations	stop_reason	best_cost
+0	83	42	['tolfun']	1.128780e-13	<== winner

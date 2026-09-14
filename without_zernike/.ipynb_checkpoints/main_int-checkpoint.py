@@ -24,7 +24,7 @@ if len(sys.argv) != 2:
 path = sys.argv[1]
 params = initialize_variables_from_file(sys.argv[1])
 dirname = (path.split("/")[-1])[:-4]
-path = path.split("/")[0] + "/runs/int_" + dirname
+path = path.split("/")[0] + "/runs/para_int_" + dirname
 if os.path.exists(path):
     shutil.rmtree(path)
 os.makedirs(path)  # Calculate all initial parameters from the input file:
@@ -34,8 +34,7 @@ for s in subdir:
     os.makedirs(path + "/" + s)
 
 with open(path + "/time.txt", "w") as file:
-    file.write(sys.argv[0])
-
+    file.write(str(sys.argv[0]))
 ################################################
 # Lens parameters
 f_targ = params["f_targ"]  # focal length of lens
@@ -47,13 +46,11 @@ conic = params["conic"]
 wl = params["wl"]  # wavelength
 k0 = 2 * np.pi / wl  # k=2*pi/wavelength
 fn = params["f_num"]  # f#
-# w0 = f_targ / (2 * fn)  # initial spot size
 w0 = f_init / (2 * fn)  # initial spot size
 rmax = params["r_maxf"] * w0  # the max value of r
 nr = params["nr"]  # number of points in r
 zR = np.pi * w0**2 / wl  # Initial rayleigh length
 wR = 2 / np.pi * fn * wl  # Diffraction limited spot size
-L = params["L"]
 
 # Distance parameters
 dz = params["dz"]
@@ -70,9 +67,8 @@ steps = params["steps"]  # max number of steps algorithm is allowed
 lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
-n = params["n"]
+# n = params["n"]
 skip = params["skip"]
-stop = params["stop"]
 ################################################
 print(w0)
 # Hankel
@@ -80,7 +76,7 @@ print(w0)
 [T_R2K, T_K2R] = DHTtransformMatrix(nr, rmax, ell)
 
 # Initial propagation
-phi_I = 1j * np.exp(-((r / w0) ** 2))
+phi_I = np.exp(-((r / w0) ** 2))
 zm_t = create_starting_optic(r, 2 * f_targ)  # target mirror
 ftf_t = forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t
@@ -123,7 +119,6 @@ change = 1000
 i = 0
 start_time = time.time()
 data = []
-break_flag = False
 while change > tol and i < steps:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))
@@ -170,16 +165,10 @@ while change > tol and i < steps:
     # Updating the change to compare against tolerance
     change = np.sum(np.abs(dfdz * lr))
     i += 1
-    mu = calc_mu(IrIt, Itsq)
-    if i > stop and mu < 0.5:
-        break_flag = True
-        break
-
 fr = forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r)
 np.savetxt(path + "/data.csv", data, delimiter=",")
 final_time = time.time()
-
-if i < steps and not break_flag:
+if i < steps:
     output = "Algorithm converged in %d steps \nTotal Time:" % (i) + str(
         timedelta(seconds=final_time - start_time)
     )
@@ -205,7 +194,7 @@ mu_val = calc_mu(rt, pt2)
 print("START PLOTTING")
 pstart = time.time()
 
-plot_total_change(path, r, w0, gr, lr, wl, i, n)
+plot_total_change(path, r, w0, gr, lr, wl, i)
 print("1")
 plot_max_grad(path, gr)
 print("2")

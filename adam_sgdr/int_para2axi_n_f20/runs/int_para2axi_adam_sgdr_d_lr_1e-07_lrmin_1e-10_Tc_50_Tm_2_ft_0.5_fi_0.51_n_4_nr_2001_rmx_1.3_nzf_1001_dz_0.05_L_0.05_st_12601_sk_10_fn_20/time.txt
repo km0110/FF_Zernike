@@ -1,0 +1,4 @@
+main_int_para2axi_adam_sgdr.py
+Algorithm converged in 4298 steps 
+Total Time:0:27:32.768078
+Plotting time: 0:00:03.861181

@@ -1,0 +1,18 @@
+main_int_para2axi.py
+Algorithm converged in 17180 steps 
+Total Time:2:30:41.408462
+Plotting time: 0:01:25.298398
+Plotting time: 0:01:36.059063
+Plotting time: 0:01:44.843234
+Plotting time: 0:00:12.568737
+Plotting time: 0:00:01.849381
+Plotting time: 0:00:13.500025
+Plotting time: 0:00:04.991853
+Plotting time: 0:00:05.027558
+Plotting time: 0:00:01.548794
+Plotting time: 0:00:03.729750
+Plotting time: 0:00:01.707269
+Plotting time: 0:00:01.535993
+Plotting time: 0:00:00.776510
+Plotting time: 0:00:03.023463
+Plotting time: 0:00:27.524678

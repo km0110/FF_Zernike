@@ -1,1 +1,20 @@
-*.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+**/__pycache__/
+**/.DS_Store
+.claude/
+.vscode/
+**/*.csv
+!**/BesselZeroes*.csv
+
+# Per-iteration frame dumps used only to build videos/GIFs -- disposable,
+# regeneratable from a run's own saved .csv data. Top-level summary plots
+# (fom_mu.pdf, mirror_comp.pdf, etc.) are not affected.
+**/I_OA/
+**/I_f/
+**/g/
+**/mirror/
+**/psi_S/
+**/pr_f/
+**/pr_oa/
+**/phr_f/
+**/phr_oa/

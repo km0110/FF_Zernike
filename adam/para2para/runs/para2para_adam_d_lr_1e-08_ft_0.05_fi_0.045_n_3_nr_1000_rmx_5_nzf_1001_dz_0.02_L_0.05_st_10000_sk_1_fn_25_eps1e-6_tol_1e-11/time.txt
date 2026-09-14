@@ -1,0 +1,15 @@
+main_para2para_adam.py
+Algorithm failed to converge in 10000 steps 
+Total Time:0:45:07.145506
+Plotting time: 0:00:10.784833
+Plotting time: 0:00:00.960515
+Plotting time: 0:00:00.627946
+Plotting time: 0:00:01.865332
+Plotting time: 0:00:01.599370
+Plotting time: 0:00:00.974570
+Plotting time: 0:00:12.334923
+Plotting time: 0:00:26.909375
+Plotting time: 0:00:01.166518
+Plotting time: 0:00:08.998648
+Plotting time: 0:41:25.617636
+Plotting time: 0:00:00.990642

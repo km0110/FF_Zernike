@@ -1,0 +1,4 @@
+CMA-ES finished after 65 generations (stop reason: ['tolfun']), best cost=FOM/Itsq+lam*|1-mu|=1.251e-13 
+Total Time:0:06:20.961698
+1 restarts finished. Winning restart: seed=78, best cost=FOM/Itsq+lam*|1-mu|=1.251e-13 
+Total Time:0:06:22.100443

@@ -1,0 +1,5 @@
+main_int_para2para_adam.py
+Algorithm converged in 819 steps 
+Total Time:0:01:51.303609
+Plotting time: 0:02:24.071166
+Plotting time: 0:00:00.630397

@@ -1,0 +1,12 @@
+Run script:main_int_para2axi.py
+Algorithm failed to converge in 10001 steps 
+Total Time:1:36:14.338596
+Plotting time: 0:00:01.664180
+Plotting time: 0:00:02.310492
+Plotting time: 0:00:02.702775
+Plotting time: 0:01:16.650965
+Plotting time: 0:00:02.246866
+Plotting time: 0:00:05.310869
+Plotting time: 0:00:10.955227
+Plotting time: 2:26:39.201848
+Plotting time: 0:00:01.403048

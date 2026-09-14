@@ -1,0 +1,6 @@
+main_int_para2axi_cma.py
+CMA-ES finished after 207 generations (stop reason: ['tolfun']), best cost=FOM/Itsq+lam*|1-mu|=1.855e-02 
+Total Time:0:08:23.930869
+Plotting time: 0:00:04.586976
+Plotting time: 0:00:37.155836
+Plotting time: 0:00:02.119570

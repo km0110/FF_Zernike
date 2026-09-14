@@ -1,0 +1,18 @@
+main_int_para2axi.py
+Algorithm failed to converge in 25000 steps 
+Total Time:3:35:18.264369
+Plotting time: 0:00:55.662014
+Plotting time: 0:01:30.196653
+Plotting time: 0:00:57.599016
+Plotting time: 0:00:03.535942
+Plotting time: 0:00:00.856889
+Plotting time: 0:00:00.849035
+Plotting time: 0:00:04.485458
+Plotting time: 0:00:03.505953
+Plotting time: 0:00:00.780163
+Plotting time: 0:00:03.721967
+Plotting time: 0:00:00.760305
+Plotting time: 0:00:00.775667
+Plotting time: 0:00:00.782029
+Plotting time: 0:00:01.998792
+Plotting time: 0:02:25.230613

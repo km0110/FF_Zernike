@@ -1,0 +1,7 @@
+main_int_para2axi_cma.py
+CMA-ES finished after 200 generations (stop reason: ['maxiter']), best cost=FOM/Itsq+lam*|1-mu|=7.868e-07 
+Total Time:0:06:46.401292
+Plotting time: 0:00:16.791149
+Plotting time: 0:00:02.784862
+Plotting time: 0:00:31.737026
+Plotting time: 0:00:01.820976

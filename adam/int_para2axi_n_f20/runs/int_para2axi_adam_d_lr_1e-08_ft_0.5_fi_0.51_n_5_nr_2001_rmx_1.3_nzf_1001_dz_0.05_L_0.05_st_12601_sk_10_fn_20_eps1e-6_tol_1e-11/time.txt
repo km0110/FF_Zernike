@@ -1,0 +1,11 @@
+main_int_para2axi_adam.py
+Algorithm converged in 5159 steps 
+Total Time:0:30:43.275313
+Plotting time: 0:00:06.064485
+Plotting time: 0:00:00.607011
+Plotting time: 0:00:01.112945
+Plotting time: 0:00:01.610821
+Plotting time: 0:00:01.169465
+Plotting time: 0:00:01.157866
+Plotting time: 0:00:01.154298
+Plotting time: 0:00:01.006095

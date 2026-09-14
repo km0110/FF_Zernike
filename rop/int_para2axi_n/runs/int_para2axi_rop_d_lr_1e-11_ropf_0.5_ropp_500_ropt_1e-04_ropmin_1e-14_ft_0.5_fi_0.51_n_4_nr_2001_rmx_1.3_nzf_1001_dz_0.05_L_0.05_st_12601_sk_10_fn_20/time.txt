@@ -1,0 +1,7 @@
+main_int_para2axi_rop.py
+Algorithm failed to converge in 12601 steps 
+Total Time:1:13:46.277464
+Plotting time: 0:00:06.819012
+Plotting time: 0:00:01.380805
+Plotting time: 0:00:00.689752
+Plotting time: 0:00:00.672835

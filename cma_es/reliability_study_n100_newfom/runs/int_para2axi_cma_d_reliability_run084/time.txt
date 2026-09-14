@@ -1,0 +1,4 @@
+CMA-ES finished after 200 generations (stop reason: ['maxiter']), best cost=FOM/Itsq+lam*|1-mu|=1.900e-02 
+Total Time:0:17:34.722662
+1 restarts finished. Winning restart: seed=85, best cost=FOM/Itsq+lam*|1-mu|=1.900e-02 
+Total Time:0:17:40.748018

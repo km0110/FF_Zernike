@@ -1,0 +1,2 @@
+CMA-ES finished after 175 generations (stop reason: ['tolfacupx']), best cost=FOM/Itsq+lam*|1-mu|=1.900e-02 
+Total Time:0:15:22.309400

@@ -4,12 +4,17 @@
 # In[1]:
 
 
+import os
 import numpy as np
 from scipy.special import jv
 from scipy.integrate import simpson
-from numpy.fft import *
+from concurrent.futures import ThreadPoolExecutor
+import sys as _sys
+_sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from gaussian_beam import *
 import csv
+
+_int_pool = ThreadPoolExecutor(max_workers=3)
 
 
 # In[2]:
@@ -59,47 +64,33 @@ def create_axiparabola(r, R, L, f0, taylor=False):
 #     return zernpol @ a_n
 
 
-def DHTarrays(N, R, ell):
-    Zeroes = np.genfromtxt("BesselZeroes" + str(ell) + ".csv")
-    r = R * Zeroes[:N] / Zeroes[N - 1]
-    k = Zeroes[:N] / R
-    return np.array([r, k])
-
-
-# In[4]:
-
-
-def DHTtransformMatrix(N, R, ell):
-    Zeroes = np.genfromtxt("BesselZeroes" + str(ell) + ".csv")
+def DHTsetup(N, R, ell):
+    _csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), "BesselZeroes" + str(ell) + ".csv")
+    Zeroes = np.genfromtxt(_csv)
     alpha = Zeroes[:N]
     kR = alpha[N - 1]
     kmax = kR / R
+    r = R * alpha / alpha[N - 1]
+    k = alpha / R
     T = (
         jv(ell, np.outer(alpha, alpha) / kR)
         / np.outer(abs(jv(ell + 1, alpha)), abs(jv(ell + 1, alpha)))
         / kR
     )
-    # print(T)
     A = abs(jv(ell + 1, alpha))
     T_R2K = 4.0 * np.pi * (R / kmax) * T * A[:, None] / A[None, :]
     T_K2R = (1 / np.pi) * (kmax / R) * T * A[:, None] / A[None, :]
-
-    return T_R2K, T_K2R
+    return r, k, T_R2K, T_K2R
 
 
 # In[5]:
 
 
-def propagate(fe, k, k0, z, T_R2K, T_K2R):
-    # 1) fe is the initial electric field
-    # 2) Hankel transform the field through multiplying by the appropriate transform matrix
+def propagate(fe, k, k0, z, T_R2K, T_K2R, phase=None):
     FT = T_R2K @ fe
-    # Hankel Transform
-    # 3) Propagate 𝐸̃ from 𝑧 = 0 to 𝑧 = Δ𝑧 through multiplying 𝐸̃ by the diffractive phase:
-    FT = FT * np.exp(-1j * k**2 / (2 * k0) * z[:, np.newaxis])
-    # print(FT.shape)
-    # print(T_K2R.shape)
-    # 4) Inverse Hankel transform 𝐸̃ from 𝑘𝑟-space to 𝑟-space through multiplying by the inverse transform matrix
+    if phase is None:
+        phase = np.exp(-1j * k**2 / (2 * k0) * z[:, np.newaxis])
+    FT = FT * phase
     fT = T_K2R @ (FT.T)
     return fT
 
@@ -117,13 +108,11 @@ def mirror(phiI, k0, zm):
 # In[8]:
 
 
-def forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm, wavelength=1e-6):
-    k0 = 2 * np.pi / wavelength
-    #     fT_i=prop(phi_I,k,k0,zI,T_R2K,T_K2R)
+def forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm, k0=None, wavelength=1e-6, phase=None):
+    if k0 is None:
+        k0 = 2 * np.pi / wavelength
     phi_R0 = mirror(phi_I, k0, zm)
-
-    fT_f = propagate(phi_R0, k, k0, zF, T_R2K, T_K2R)
-
+    fT_f = propagate(phi_R0, k, k0, zF, T_R2K, T_K2R, phase=phase)
     return fT_f
 
 
@@ -200,10 +189,10 @@ def weight(r, R, z, zi, zf, delta):
 
 
 def int_pairs(r, z, w, Ir, It):
-    Irsq = integrate(r, z, w, Ir, Ir)
-    IrIt = integrate(r, z, w, Ir, It)
-    Itsq = integrate(r, z, w, It, It)
-    return Irsq, IrIt, Itsq
+    f_rr = _int_pool.submit(integrate, r, z, w, Ir, Ir)
+    f_rt = _int_pool.submit(integrate, r, z, w, Ir, It)
+    f_tt = _int_pool.submit(integrate, r, z, w, It, It)
+    return f_rr.result(), f_rt.result(), f_tt.result()
 
 
 # In[17]:
@@ -233,12 +222,11 @@ def S(w, phi_r, Ir, It, IrIt, Itsq):
 # In[20]:
 
 
-def calc_psi_hat(k, k0, z, s_hat, method=simpson):
-    # print('start psi hat')
+def calc_psi_hat(k, k0, z, s_hat, phase=None):
     coeff = -1j / (2 * k0)
-    integrand = np.exp(-1j * np.outer(k**2, z) / (2 * k0)) * s_hat
-    # print('end psi hat')
-    return coeff * method(integrand, z)
+    if phase is None:
+        phase = np.exp(-1j * np.outer(k**2, z) / (2 * k0))
+    return coeff * simpson(phase * s_hat, x=z)
 
 
 # In[21]:

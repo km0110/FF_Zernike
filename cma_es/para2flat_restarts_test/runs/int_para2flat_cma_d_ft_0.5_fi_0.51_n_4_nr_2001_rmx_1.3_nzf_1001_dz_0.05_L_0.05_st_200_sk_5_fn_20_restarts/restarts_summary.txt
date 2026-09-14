@@ -1,0 +1,11 @@
+restart	seed	generations	stop_reason	best_cost
+0	1	200	['maxiter']	4.088623e-02
+1	2	152	['tolfun']	4.088623e-02
+2	3	161	['tolfun']	4.088623e-02
+3	4	148	['tolfun']	5.538192e-02
+4	5	153	['tolfun']	5.538192e-02
+5	6	149	['tolfun']	5.538192e-02
+6	7	129	['tolfun']	5.538192e-02
+7	8	131	['tolfun']	4.088623e-02
+8	9	143	['tolfun']	4.088623e-02
+9	10	166	['tolfun']	4.088623e-02	<== winner

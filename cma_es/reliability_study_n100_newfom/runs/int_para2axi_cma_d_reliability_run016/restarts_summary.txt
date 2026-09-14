@@ -1,0 +1,2 @@
+restart	seed	generations	stop_reason	best_cost
+0	17	200	['maxiter']	7.868391e-07	<== winner

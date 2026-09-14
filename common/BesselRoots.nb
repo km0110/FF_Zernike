@@ -1,0 +1,72 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 15.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      2137,         62]
+NotebookOptionsPosition[      1755,         48]
+NotebookOutlinePosition[      2181,         64]
+CellTagsIndexPosition[      2138,         61]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Zeroes", "=", 
+   RowBox[{
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"N", "[", 
+       RowBox[{"BesselJZero", "[", 
+        RowBox[{"0", ",", "k"}], "]"}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"k", ",", "1", ",", 
+        SuperscriptBox["2", "14"]}], "}"}]}], "]"}], "//", "TableForm"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Export", "[", 
+   RowBox[{"\"\<BesselZeroes0.csv\>\"", ",", "Zeroes"}], "]"}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.8426193711650457`*^9, 3.842619402201885*^9}, {
+  3.8426194787344646`*^9, 3.842619506431896*^9}, {3.8426195542517147`*^9, 
+  3.842619600683111*^9}, {3.842619667636549*^9, 3.8426196711835012`*^9}, {
+  3.84261975819107*^9, 3.8426197779583797`*^9}, {3.842964659406808*^9, 
+  3.8429646703601027`*^9}, {3.8429647328458967`*^9, 3.842964734717443*^9}, {
+  3.8429648031359377`*^9, 3.842964810682403*^9}, {3.8461440936993437`*^9, 
+  3.846144097383808*^9}, {3.846144168631558*^9, 3.846144170860231*^9}, {
+  3.907080231395342*^9, 3.907080233004303*^9}, {3.907080748865383*^9, 
+  3.9070807577112894`*^9}},
+ CellLabel->"In[9]:=",ExpressionUUID->"aed71da8-f30e-490a-9eac-c3d9ec69b98c"]
+},
+WindowSize->{807.5999999999999, 574.1999999999999},
+WindowMargins->{{19.8, Automatic}, {Automatic, 0}},
+FrontEndVersion->"15.0 for Microsoft Windows (64-bit) (May 19, 2026)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"b9b04c59-66c1-4d48-a5be-0426f070c963"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[554, 20, 1197, 26, 49, "Input",ExpressionUUID->"aed71da8-f30e-490a-9eac-c3d9ec69b98c"]
+}
+]
+*)
+
+(* End of internal cache information *)
+

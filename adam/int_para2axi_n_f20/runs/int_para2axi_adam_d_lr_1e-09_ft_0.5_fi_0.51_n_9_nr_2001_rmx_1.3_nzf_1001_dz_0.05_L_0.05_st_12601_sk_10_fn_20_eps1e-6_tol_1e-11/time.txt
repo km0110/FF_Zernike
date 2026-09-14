@@ -1,0 +1,11 @@
+main_int_para2axi_adam.py
+Algorithm failed to converge in 12601 steps 
+Total Time:1:14:09.002875
+Plotting time: 0:00:07.156117
+Plotting time: 0:00:00.612708
+Plotting time: 0:00:01.314203
+Plotting time: 0:00:01.211426
+Plotting time: 0:00:01.270722
+Plotting time: 0:00:01.336885
+Plotting time: 0:00:01.272716
+Plotting time: 0:00:00.683843

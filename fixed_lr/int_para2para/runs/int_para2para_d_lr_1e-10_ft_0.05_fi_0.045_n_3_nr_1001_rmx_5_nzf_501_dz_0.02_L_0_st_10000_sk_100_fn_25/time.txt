@@ -1,0 +1,17 @@
+main_int_para2para.py
+Algorithm failed to converge in 10000 steps 
+Total Time:0:36:52.348817
+Plotting time: 0:01:36.489415
+Plotting time: 0:00:28.367627
+Plotting time: 0:00:02.218497
+Plotting time: 0:00:00.816331
+Plotting time: 0:00:00.803796
+Plotting time: 0:00:02.033914
+Plotting time: 0:00:02.592798
+Plotting time: 0:00:00.753589
+Plotting time: 0:00:01.894471
+Plotting time: 0:00:00.722042
+Plotting time: 0:00:00.769289
+Plotting time: 0:00:00.729910
+Plotting time: 0:00:01.119619
+Plotting time: 0:00:10.285178

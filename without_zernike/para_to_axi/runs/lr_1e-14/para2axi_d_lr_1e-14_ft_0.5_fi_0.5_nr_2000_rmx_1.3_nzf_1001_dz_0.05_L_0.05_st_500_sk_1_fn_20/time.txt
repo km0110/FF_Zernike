@@ -1,0 +1,16 @@
+Run script:main_para2axi.py
+Algorithm failed to converge in 500 steps 
+Total Time:0:05:03.067951
+Plotting time: 0:00:05.696918
+Plotting time: 0:00:03.168888
+Plotting time: 0:00:04.381621
+Plotting time: 0:00:04.132314
+Plotting time: 0:00:04.058827
+Plotting time: 0:00:04.103281
+Plotting time: 0:00:03.944229
+Plotting time: 0:00:03.251823
+Plotting time: 0:00:02.554518
+Plotting time: 0:00:05.879220
+Plotting time: 0:00:04.953951
+Plotting time: 0:01:22.068395
+Plotting time: 0:00:02.223474

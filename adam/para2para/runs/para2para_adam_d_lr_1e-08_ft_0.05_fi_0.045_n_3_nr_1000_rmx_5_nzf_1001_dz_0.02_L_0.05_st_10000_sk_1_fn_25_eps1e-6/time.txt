@@ -1,0 +1,16 @@
+main_para2para_adam.py
+Algorithm converged in 346 steps 
+Total Time:0:03:39.209355
+Plotting time: 0:00:12.856740
+Plotting time: 0:00:01.422626
+Plotting time: 0:00:01.647447
+Plotting time: 0:00:00.636369
+Plotting time: 0:00:00.985227
+Plotting time: 0:00:01.920054
+Plotting time: 0:00:01.233965
+Plotting time: 0:00:02.291810
+Plotting time: 0:00:02.632686
+Plotting time: 0:00:00.911979
+Plotting time: 0:00:01.248141
+Plotting time: 0:01:01.859783
+Plotting time: 0:00:01.297294

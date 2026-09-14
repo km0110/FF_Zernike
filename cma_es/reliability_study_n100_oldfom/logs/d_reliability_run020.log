@@ -1,0 +1,41 @@
+0.012750000000000001
+=== restart 1/1 (seed=21) ===
+  [seed 21] GEN 0 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:7.033e-09  overall best:7.033e-09  sigma=3.08e-01
+  [seed 21] GEN 1 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:3.373e-10  overall best:3.373e-10  sigma=3.97e-01
+  [seed 21] GEN 2 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:6.311e-11  overall best:6.311e-11  sigma=5.45e-01
+  [seed 21] GEN 3 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:4.731e-11  overall best:4.731e-11  sigma=5.64e-01
+  [seed 21] GEN 4 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.356e-11  overall best:1.356e-11  sigma=5.99e-01
+  [seed 21] GEN 5 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.663e-11  overall best:1.356e-11  sigma=6.61e-01
+  [seed 21] GEN 6 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.906e-11  overall best:1.356e-11  sigma=7.06e-01
+  [seed 21] GEN 7 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.612e-11  overall best:1.356e-11  sigma=7.64e-01
+  [seed 21] GEN 8 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:5.023e-12  overall best:5.023e-12  sigma=1.06e+00
+  [seed 21] GEN 9 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.432e-11  overall best:5.023e-12  sigma=1.15e+00
+  [seed 21] GEN 10 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:3.881e-12  overall best:3.881e-12  sigma=1.40e+00
+  [seed 21] GEN 11 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.617e-12  overall best:2.617e-12  sigma=1.51e+00
+  [seed 21] GEN 12 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.879e-12  overall best:1.879e-12  sigma=1.54e+00
+  [seed 21] GEN 13 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.225e-12  overall best:1.879e-12  sigma=1.56e+00
+  [seed 21] GEN 14 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.086e-12  overall best:1.086e-12  sigma=1.70e+00
+  [seed 21] GEN 15 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:7.647e-13  overall best:7.647e-13  sigma=1.87e+00
+  [seed 21] GEN 16 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:8.782e-13  overall best:7.647e-13  sigma=2.29e+00
+  [seed 21] GEN 17 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:3.127e-13  overall best:3.127e-13  sigma=3.13e+00
+  [seed 21] GEN 18 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.259e-13  overall best:1.259e-13  sigma=4.69e+00
+  [seed 21] GEN 19 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.435e-13  overall best:1.259e-13  sigma=5.77e+00
+  [seed 21] GEN 20 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.568e-13  overall best:1.259e-13  sigma=5.89e+00
+  [seed 21] GEN 21 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:3.372e-13  overall best:1.259e-13  sigma=5.38e+00
+  [seed 21] GEN 22 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:4.032e-13  overall best:1.259e-13  sigma=4.95e+00
+  [seed 21] GEN 23 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:3.343e-13  overall best:1.259e-13  sigma=4.63e+00
+  [seed 21] GEN 24 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:4.750e-13  overall best:1.259e-13  sigma=4.31e+00
+  [seed 21] GEN 25 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.299e-12  overall best:1.259e-13  sigma=4.23e+00
+  [seed 21] GEN 26 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.214e-13  overall best:1.214e-13  sigma=4.12e+00
+  [seed 21] GEN 27 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.958e-13  overall best:1.214e-13  sigma=4.24e+00
+  [seed 21] GEN 28 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.507e-13  overall best:1.214e-13  sigma=4.28e+00
+  [seed 21] GEN 29 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.016e-13  overall best:1.214e-13  sigma=3.59e+00
+  [seed 21] GEN 30 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.886e-13  overall best:1.214e-13  sigma=3.60e+00
+  [seed 21] GEN 31 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:4.047e-13  overall best:1.214e-13  sigma=3.29e+00
+  [seed 21] GEN 32 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:2.282e-13  overall best:1.214e-13  sigma=3.26e+00
+  [seed 21] GEN 33 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.628e-13  overall best:1.214e-13  sigma=3.05e+00
+  [seed 21] GEN 34 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.909e-13  overall best:1.214e-13  sigma=2.81e+00
+  [seed 21] GEN 35 	 best-of-gen cost=FOM/Itsq+lam*|1-mu|:1.573e-13  overall best:1.214e-13  sigma=2.47e+00
+1 restarts finished. Winning restart: seed=21, best cost=FOM/Itsq+lam*|1-mu|=1.214e-13 
+Total Time:0:03:31.270602
+Finished running main function

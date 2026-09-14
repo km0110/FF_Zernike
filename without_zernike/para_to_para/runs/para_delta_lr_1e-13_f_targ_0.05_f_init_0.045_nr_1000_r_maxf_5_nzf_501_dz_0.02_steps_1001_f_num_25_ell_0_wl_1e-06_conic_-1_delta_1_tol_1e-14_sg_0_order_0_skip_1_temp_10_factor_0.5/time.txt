@@ -1,0 +1,17 @@
+Algorithm failed to converge in 1001 steps 
+Total Time:0:01:40.439675
+Plotting Time:0:18:14.231906
+Plotting time: 0:00:10.161752
+Plotting time: 0:00:07.726896
+Plotting time: 0:00:01.633931
+Plotting time: 0:00:01.748737
+Plotting time: 0:00:02.057643
+Plotting time: 0:00:05.329902
+Plotting time: 0:00:03.399632
+Plotting time: 0:00:03.133203
+Plotting time: 0:00:03.105772
+Plotting time: 0:00:03.243509
+Plotting time: 0:00:07.666396
+Plotting time: 0:00:02.004040
+Plotting time: 0:00:15.782590
+Plotting time: 0:00:02.258287

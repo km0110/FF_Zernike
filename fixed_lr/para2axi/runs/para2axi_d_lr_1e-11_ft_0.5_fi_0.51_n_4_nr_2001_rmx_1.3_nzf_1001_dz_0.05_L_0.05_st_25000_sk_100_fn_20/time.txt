@@ -1,0 +1,5 @@
+main_para2axi.py
+Algorithm converged in 13172 steps 
+Total Time:2:22:52.491858
+Plotting time: 0:00:23.696980
+Plotting time: 0:00:20.838319
