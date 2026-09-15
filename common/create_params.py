@@ -46,10 +46,8 @@ params = {
     "delta": 1,
     "tol": 1e-14,
     "sg": 0,
-    "order": 0,
+    "order": 2,
     "stop": 1000001,
-    "temp": 10,
-    "factor": 0.5,
 }
 
 # Other example (originally without_zernike's) -- a smaller/quicker scenario,
@@ -72,10 +70,8 @@ params = {
 #     "delta": 1,
 #     "tol": 1e-14,
 #     "sg": 0,
-#     "order": 0,
+#     "order": 2,
 #     # "stop": 1000001,
-#     "temp": 10,
-#     "factor": 0.5,
 # }
 
 

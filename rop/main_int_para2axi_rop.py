@@ -62,6 +62,8 @@ steps   = params["steps"]
 lr      = params["lr"]
 tol     = params["tol"]
 delta   = params["delta"]
+sg      = params.get("sg", 0)
+order = params.get("order", 2)
 j     = params["j"]
 skip    = params["skip"]
 
@@ -71,14 +73,14 @@ rop_patience  = int(params.get("rop_patience", 500))
 rop_threshold = params.get("rop_threshold", 1e-4)
 rop_min_lr    = params.get("rop_min_lr", 1e-12)
 ################################################
-power = 40
+P = params.get("P", 20)
 print(w0)
 
 r, k, T_R2K, T_K2R = adj.DHTsetup(nr, rmax, ell)
 prop_phase = np.exp(-1j * k**2 / (2 * k0) * zF[:, np.newaxis])
 adj_phase = prop_phase.T.copy()
 
-phi_I = np.exp(-((r / w0) ** power))
+phi_I = np.exp(-((r / w0) ** 2) ** P)
 zm_t  = create_axiparabola(r, w0, L, f_targ)
 ftf_t = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_t, k0)
 
@@ -105,7 +107,7 @@ start_time = time.time()
 data = []
 lr_history = []
 break_flag = False
-wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta, sg, order)
 
 # Reduce on plateau state
 best_mu          = np.inf

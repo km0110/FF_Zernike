@@ -73,12 +73,13 @@ steps = params["steps"]  # max number of steps algorithm is allowed
 lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
+sg = params.get("sg", 0)
+order = params.get("order", 2)
 j = params["j"]
 skip = params["skip"]
 # stop = params["stop"]
-# power = params['power']
 ################################################
-power=40
+P = params.get("P", 20)
 print(w0)
 # Hankel
 r, k, T_R2K, T_K2R = adj.DHTsetup(nr, rmax, ell)
@@ -86,7 +87,7 @@ prop_phase = np.exp(-1j * k**2 / (2 * k0) * zF[:, np.newaxis])
 adj_phase = prop_phase.T.copy()
 
 # Initial propagation
-phi_I = np.exp(-((r / w0) ** power))
+phi_I = np.exp(-((r / w0) ** 2) ** P)
 zm_t = create_axiparabola(r, w0, L, f_targ)  # target mirror
 ftf_t = adj.forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t, k0
@@ -129,7 +130,7 @@ i = 0
 start_time = time.time()
 data = []
 break_flag = False
-wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta, sg, order)
 while change > tol and i < steps:
     if i % 1 == 0:
         print("MAIN STEP %d \t Grad:%.3e" % (i, change))

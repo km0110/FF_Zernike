@@ -60,6 +60,9 @@ steps = params["steps"]  # max number of steps algorithm is allowed
 lr = params["lr"]  # learning rate
 tol = params["tol"]  # tolerance
 delta = params["delta"]  # weighting function in r
+sg = params.get("sg", 0)
+order = params.get("order", 2)
+P = params.get("P", 1)
 j = params["j"]
 skip = params["skip"]
 ################################################
@@ -70,7 +73,7 @@ prop_phase = np.exp(-1j * k**2 / (2 * k0) * zF[:, np.newaxis])
 adj_phase = prop_phase.T.copy()
 
 # Initial propagation
-phi_I = np.exp(-((r / w0) ** 2))
+phi_I = np.exp(-((r / w0) ** 2) ** P)
 zm_t = adj.create_starting_optic(r, 2 * f_targ)  # target mirror
 ftf_t = adj.forward_propagation(
     k, phi_I, T_R2K, T_K2R, zF, zm_t, k0
@@ -112,7 +115,7 @@ while change > tol and i < steps:
     Ir = adj.calc_intensity(ftf_r)
 
     # Calculating Integrals for Source
-    pR, pT = adj.weighted_phi(r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta)
+    pR, pT = adj.weighted_phi(r, wR, zF, f_targ - dz, f_targ + dz, ftf_r, ftf_t, delta, sg, order)
     prsq, prpt, ptsq = adj.int_pairs(
         r, zF, pR, pT, ftf_r, ftf_t
     )  # phi_r_sq, phi_r_phi_t, phi_t_sq

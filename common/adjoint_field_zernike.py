@@ -158,8 +158,8 @@ def w_z(z, zi, zf, sg=False, order=2):
 
 
 # In[14]:
-def weight(r, R, z, zi, zf, delta):
-    wz = w_z(z, zi, zf)
+def weight(r, R, z, zi, zf, delta, sg=0, order=2):
+    wz = w_z(z, zi, zf, sg, order)
     wxp = w_xp(r, R, delta)
     w = wz * wxp[:, np.newaxis]
     return w
@@ -176,8 +176,8 @@ def integrate(r, z, phi1, phi2, method=simpson):
 # In[15]:
 
 
-def weighted_phi(r, R, z, zi, zf, phi_r, phi_t, delta):
-    wz = w_z(z, zi, zf)
+def weighted_phi(r, R, z, zi, zf, phi_r, phi_t, delta, sg=0, order=2):
+    wz = w_z(z, zi, zf, sg, order)
     wxp = w_xp(r, R, delta)
     pr = phi_r * wz * wxp[:, np.newaxis]
     pt = phi_t * wz * wxp[:, np.newaxis]

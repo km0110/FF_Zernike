@@ -66,6 +66,9 @@ steps = params["steps"]
 lr = params["lr"]
 tol = params["tol"]
 delta = params["delta"]
+sg = params.get("sg", 0)
+order = params.get("order", 2)
+P = params.get("P", 20)
 j = params["j"]
 skip = params["skip"]
 stop = params["stop"]
@@ -80,7 +83,7 @@ r, k, T_R2K, T_K2R = adj.DHTsetup(nr, rmax, ell)
 prop_phase = np.exp(-1j * k**2 / (2 * k0) * zF[:, np.newaxis])
 adj_phase = prop_phase.T.copy()
 
-phi_I = np.exp(-((r / w0) ** 40))
+phi_I = np.exp(-((r / w0) ** 2) ** P)
 zm_t = create_axiparabola(r, w0, L, f_targ)
 ftf_t = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_t, k0)
 It = adj.calc_intensity(ftf_t)
@@ -122,7 +125,7 @@ while change > tol and i < steps:
     ftf_r = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_r, k0, phase=prop_phase)
     Ir = adj.calc_intensity(ftf_r)
 
-    pR, pT = adj.weighted_phi(r, wR, zF, f_targ - dz, f_targ + L + dz, ftf_r, ftf_t, delta)
+    pR, pT = adj.weighted_phi(r, wR, zF, f_targ - dz, f_targ + L + dz, ftf_r, ftf_t, delta, sg, order)
     prsq, prpt, ptsq = adj.int_pairs(r, zF, pR, pT, ftf_r, ftf_t)
     data.append([prsq, prpt, ptsq])
 

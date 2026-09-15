@@ -18,5 +18,3 @@ tol = 1e-14
 sg = 0
 order = 0
 stop = 1000001
-temp = 10
-factor = 0.5

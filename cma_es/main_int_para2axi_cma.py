@@ -72,6 +72,8 @@ fl  = len(zF) // 2
 
 j   = params["j"]
 delta = params["delta"]
+sg = params.get("sg", 0)
+order = params.get("order", 2)
 
 # CMA-ES parameters
 generations = params["steps"]            # number of ask/tell generations PER RESTART (see restarts below)
@@ -96,13 +98,13 @@ seed_offset = int(params.get("seed_offset", 0))
 # etc.) via copy-on-write instead of re-running this whole module per worker.
 workers = int(params.get("workers", min(restarts, os.cpu_count() or 1)))
 ################################################
-power = 40
+P = params.get("P", 20)
 print(w0)
 
 r, k, T_R2K, T_K2R = adj.DHTsetup(nr, rmax, ell)
 prop_phase = np.exp(-1j * k**2 / (2 * k0) * zF[:, np.newaxis])
 
-phi_I = np.exp(-((r / w0) ** power))
+phi_I = np.exp(-((r / w0) ** 2) ** P)
 zm_t  = create_axiparabola(r, w0, L, f_targ)
 ftf_t = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_t, k0)
 
@@ -114,7 +116,7 @@ a_n    = adj.create_initial_coeff(rmax, 2 * f_init, j)
 rho    = r / rmax
 Z_fit  = adj.calc_Z(rho, j)
 
-wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta, sg, order)
 
 
 def evaluate(zm_r):

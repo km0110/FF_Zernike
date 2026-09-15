@@ -67,6 +67,9 @@ steps = params["steps"]
 lr = params["lr"]
 tol = params["tol"]
 delta = params["delta"]
+sg = params.get("sg", 0)
+order = params.get("order", 2)
+P = params.get("P", 20)
 j = params["j"]
 skip = params["skip"]
 
@@ -80,7 +83,7 @@ r, k, T_R2K, T_K2R = adj.DHTsetup(nr, rmax, ell)
 prop_phase = np.exp(-1j * k**2 / (2 * k0) * zF[:, np.newaxis])
 adj_phase = prop_phase.T.copy()
 
-phi_I = np.exp(-((r / w0) ** 40))
+phi_I = np.exp(-((r / w0) ** 2) ** P)
 zm_t = create_axiparabola(r, w0, L_t, f_targ)
 ftf_t = adj.forward_propagation(k, phi_I, T_R2K, T_K2R, zF, zm_t, k0)
 
@@ -114,7 +117,7 @@ i = 0
 start_time = time.time()
 data = []
 break_flag = False
-wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta, sg, order)
 
 while change > tol and i < steps:
     if i % 1 == 0:

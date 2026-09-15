@@ -178,8 +178,8 @@ def integrate(r, z, w, int1, int2, method=simpson):
 # In[15]:
 
 
-def weight(r, R, z, zi, zf, delta):
-    wz = w_z(z, zi, zf)
+def weight(r, R, z, zi, zf, delta, sg=0, order=2):
+    wz = w_z(z, zi, zf, sg, order)
     wxp = w_xp(r, R, delta)
     w = wz * wxp[:, np.newaxis]
     return w

@@ -66,19 +66,21 @@ fl  = len(zF) // 2
 
 j   = params["j"]
 delta = params["delta"]
+sg = params.get("sg", 0)
+order = params.get("order", 2)
 
 # CMA-ES parameters
 generations = params["steps"]            # number of ask/tell generations (NOT directly comparable to Adam's "steps" -- each generation evaluates a whole population, see popsize below)
 sigma0      = params.get("sigma0", 0.3)  # initial step size, in units of each coefficient's own scale (see CMA_stds below)
 b           = params.get("b", params.get("lam", 1.0))  # weight on the |1-mu| term in the combined cost (see evaluate() below)
 ################################################
-power = 40
+P = params.get("P", 20)
 print(w0)
 
 r, k, T_R2K, T_K2R = adj.DHTsetup(nr, rmax, ell)
 prop_phase = np.exp(-1j * k**2 / (2 * k0) * zF[:, np.newaxis])
 
-phi_I = np.exp(-((r / w0) ** power))
+phi_I = np.exp(-((r / w0) ** 2) ** P)
 It = create_flat(r, zF, f_targ, L / 2, 20)
 
 # axi2flat's initial optic is a real axiparabola (not a closed-form 2-mode
@@ -103,7 +105,7 @@ a_n = Z_plus @ zm_axi
 data_names = ["mirror.csv", "zernike_grad.csv", "zernike_coeff.csv", "int_oa.csv", "int_f.csv"]
 filenames = [path + "/" + s for s in data_names]
 
-wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta)
+wt = adj.weight(r, wR, zF, f_targ - dz, f_targ + L + dz, delta, sg, order)
 
 
 def evaluate(zm_r):

@@ -5,6 +5,28 @@ polynomials to parameterize the mirror shape. Given a starting mirror and a
 target field or intensity profile, each optimizer here iteratively reshapes
 the mirror (either as a set of Zernike coefficients, or, in `without_zernike/`,
 directly pixel-by-pixel) so its propagated far field matches the target.
+This work was done as part of a PhD thesis at Stony Brook University.
+
+**Author:** Grace J Kim
+
+**License:** [MIT](LICENSE)
+
+## Citation
+
+If you use this code, please cite:
+
+> G. J. Kim, "**Adjoint Optimization of Laser Optics for Target Intensity
+> Profiles**," Ph.D. dissertation, Department of Physics, Stony Brook
+> University, **2026**.
+
+```bibtex
+@phdthesis{kim_ff_zernike,
+  author = {Kim, Grace J.},
+  title  = {Adjoint Optimization of Laser Optics for Target Intensity Profiles},
+  school = {Stony Brook University},
+  year   = {2026},
+}
+```
 
 ## Installation
 
@@ -14,6 +36,27 @@ Requires Python 3 with:
 - `scipy`
 - `matplotlib`
 - `cma` — only needed for `cma_es/` (CMA-ES optimizer)
+
+**Highly recommended:** set these up in an isolated environment rather than
+your system Python — either option below works equally well:
+
+```bash
+# Option 1: miniconda (pick any environment name you like)
+conda create -n my_env python=3.10 numpy scipy matplotlib
+conda activate my_env
+pip install cma
+
+# Option 2: plain venv + pip
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install numpy scipy matplotlib cma
+```
+
+Every plotting path (`common/plot.py`, used by all `main_*.py` scripts and
+`make_plots.py`, plus every other `plot_*.py` in this repo) sets
+matplotlib's `text.usetex = True`, so a system LaTeX installation (e.g.
+MacTeX on macOS, TeX Live on Linux) is required to produce any plot, not
+just install the Python packages above.
 
 One script has its own extra, situational dependency: `common/create_video.py`
 needs `imageio` (`pip install imageio`), only if you're using it. Running the
@@ -25,8 +68,7 @@ itself is already checked in, so Mathematica isn't needed to run anything else.
 
 ### `common/`
 
-Shared code used by every experiment directory below — nothing in this repo
-duplicates these anymore, so this is the place to look first:
+Scripts and utilities common to use throughout every experiment directory below:
 
 - `adjoint_field_zernike.py`, `adjoint_intensity_zernike.py` — the core
   physics: Discrete Hankel Transform setup, forward propagation, the adjoint
@@ -60,21 +102,21 @@ duplicates these anymore, so this is the place to look first:
 Each holds one or more `main_*.py` driver scripts. All of them import their
 physics from `common/`.
 
-| Directory | Optimizer | Mirror parameterization | Scenarios |
-|---|---|---|---|
-| `adam/` | Adam | Zernike coefficients | para2para, para2axi, para2flat, int_para2para, int_para2axi, int_para2flat, int_axi2axi, int_axi2flat |
-| `adam_newfom/` | Adam | Zernike coefficients | int_para2axi (b-penalized FOM) |
-| `adam_sgdr/` | Adam + SGDR restarts | Zernike coefficients | int_para2axi |
-| `cma_es/` | CMA-ES (gradient-free) | Zernike coefficients | int_para2axi, int_para2flat, int_axi2flat |
-| `rop/` | Reduce-on-plateau LR | Zernike coefficients | int_para2axi |
-| `sgdr/` | SGDR (no Adam) | Zernike coefficients | int_para2axi |
-| `fixed_lr/` | Fixed learning rate | Zernike coefficients | para2para, para2axi, int_para2para, int_para2axi |
-| `without_zernike/` | Fixed learning rate | Direct per-pixel mirror | para2para, para2axi, int_para2para, int_para2axi |
-
 **Scenario naming** is `<start>2<target>`, with an `int_` prefix meaning the
 FOM matches on-axis *intensity* rather than the complex *field*:
 `para` = parabola/point-focus mirror, `axi` = axiparabola target (a flying
 focus), `flat` = flat-top intensity target.
+
+| Directory | Optimizer | Mirror parameterization | Scenarios |
+|---|---|---|---|
+| `without_zernike/` | Fixed learning rate | Direct per-pixel mirror | para2para, para2axi, int_para2para, int_para2axi |
+| `fixed_lr/` | Fixed learning rate | Zernike coefficients | para2para, para2axi, int_para2para, int_para2axi |
+| `rop/` | Reduce-on-plateau LR | Zernike coefficients | int_para2axi |
+| `sgdr/` | SGDR (no Adam) | Zernike coefficients | int_para2axi |
+| `adam/` | Adam | Zernike coefficients | para2para, para2axi, para2flat, int_para2para, int_para2axi, int_para2flat, int_axi2axi, int_axi2flat |
+| `adam_sgdr/` | Adam + SGDR restarts | Zernike coefficients | int_para2axi |
+| `adam_newfom/` | Adam | Zernike coefficients | int_para2axi (b-penalized FOM) |
+| `cma_es/` | CMA-ES (gradient-free) | Zernike coefficients | int_para2axi, int_para2flat, int_axi2flat |
 
 ### `cost_landscape_exploration/`
 
@@ -86,8 +128,14 @@ intensity FOM against the `b`-penalized one from `adam_newfom`.
 
 ### `notebooks/`
 
-Jupyter notebooks for smaller diagnostics and sanity checks (Zernike-fit
-accuracy, gradient-phase unwrapping, axiparabola sweeps).
+Jupyter notebooks for smaller diagnostics and sanity checks: Zernike-fit
+accuracy (`zernike_fit_example.ipynb`, `zern_mirror_confirm.ipynb`,
+`test_zernike_fit_on_gradient.ipynb`) and axiparabola parameter sweeps
+(`axiconUR_sweep_L.ipynb`, `axiconUR_sweep_R.ipynb`, `axiconUR_nr_comp.ipynb`
+— L, aperture radius, and radial grid resolution respectively). A separate
+diagnostic notebook, `without_zernike/gradient_phase_unwrapping.ipynb`
+(flags discontinuities in the accumulated mirror-shape gradient), lives
+alongside that directory's own scripts instead of here.
 
 ### `comparison_plots/`
 
@@ -110,7 +158,7 @@ directories above.
 ## Running a scenario
 
 ```bash
-conda activate optic
+conda activate my_env  # or whatever you named your environment
 
 cd adam
 # edit the `params` dict in create_params.py for your scenario first, then:
@@ -128,31 +176,89 @@ Every key in `create_params.py`'s `params` dict, and what it controls. Any
 value given as a list sweeps that setting (one output file per combination
 across all list-valued keys).
 
+**Physical setup** — the actual optical system being modeled:
+
 | Key | Meaning |
 |---|---|
-| `lr` | Learning rate / step size. Used by every gradient-based optimizer (Adam, fixed-lr, SGDR, reduce-on-plateau); ignored by `cma_es/` (CMA-ES has no learning rate). |
 | `f_targ` | Target mirror's focal length. |
 | `f_init` | Starting mirror's focal length (the initial guess before optimization). |
+| `conic` | Conic constant of the initial mirror surface (e.g. `-1` = parabola). |
+| `L` | Axiparabola flying-focus length — how far the "axi" target extends the focus along z. Not used by pure point-focus ("para"/"flat"-target) scenarios. |
+| `f_num` | f-number of the optical system (focal length / aperture); sets the beam waist `w0 = f_init / (2*f_num)`. |
+| `wl` | Wavelength. |
+| `P` | Power of the incoming Gaussian illumination beam: `phi_I = exp(-((r/w0)**2)**P)`. `P=1` is a plain Gaussian; higher `P` gives a flatter-topped super-Gaussian beam. Not in `create_params.py`'s dict by default — each `main_*.py` supplies its own scenario-appropriate default via `params.get("P", ...)` (`1` for the `para2para`/`int_para2para` scripts, `20` for every axi/flat-target scenario, matching what those scripts hardcoded before `P` existed). |
+
+**FOM weighting** — where in space the objective function actually compares mirror to target:
+
+| Key | Meaning |
+|---|---|
+| `delta` | Radial weighting mode: `1` weights only the on-axis point (delta-function-like); `0` uses a broader Gaussian-weighted region instead. Also sets the `d`/`e` prefix on generated filenames. |
+| `sg` | Z-weighting window shape: `0` (default) uses the standard flat-top/boxcar window; `1` uses a super-Gaussian falloff instead (`w_z`'s existing `sg=True` branch). Threaded through every `main_*.py`'s `weight()`/`weighted_phi()` call. |
+| `order` | Order of the super-Gaussian falloff when `sg=1` (higher = sharper-edged, closer to a boxcar; default `2`). Threaded through every `main_*.py`'s `weight()`/`weighted_phi()` call the same way as `sg`. |
+| `b` | Weight on a penalty term added to the plain intensity FOM (default `1.0`; `0` reproduces the original, unpenalized FOM) — the formula itself differs by directory, not by value of `b`: `adam_newfom/` bakes `b*(1-mu)**2` directly into `FOM()` itself (`adjoint_intensity_newfom.py`); `cma_es/` instead computes `cost = fom/Itsq + b*abs(1-mu)` externally, on top of the plain (unpenalized) FOM. Older saved runs use the pre-rename keys `alpha` or `lam` for the same value — see [Terminology](#terminology). Not in `create_params.py`'s dict; each script supplies its own default via `params.get(...)`. |
+
+**Mirror representation:**
+
+| Key | Meaning |
+|---|---|
 | `j` | Number of Zernike radial modes parameterizing the mirror (azimuthally symmetric, so mode index `i` is radial order `n=2i`). Not used by `without_zernike/`, which parameterizes the mirror directly per-pixel instead. |
+
+**Grid resolution** — purely numerical, doesn't change the physics being modeled:
+
+| Key | Meaning |
+|---|---|
 | `nr` | Number of radial grid points. |
 | `r_maxf` | Radial extent of the simulation grid, as a multiple of the beam waist `w0` (`rmax = r_maxf * w0`). |
 | `nzf` | Number of longitudinal (z) grid points. |
 | `dz` | Half-width of the padding added to the z-window around the target focal region. |
-| `L` | Axiparabola flying-focus length — how far the "axi" target extends the focus along z. Not used by pure point-focus ("para"/"flat"-target) scenarios. |
-| `steps` | Maximum number of optimization iterations (generations, for `cma_es/`). |
-| `skip` | Save data/frames to disk every `skip` steps. |
-| `f_num` | f-number of the optical system (focal length / aperture); sets the beam waist `w0 = f_init / (2*f_num)`. |
 | `ell` | Azimuthal order for the Hankel transform (Bessel function order). Every current `main_*.py` hardcodes this to `0` rather than reading it from the parameter file — the value here is only consulted by `create_params.py`'s own resolution/spot-size sanity checks, to pick which `BesselZeroes<ell>.csv` to validate against. |
-| `wl` | Wavelength. |
-| `conic` | Conic constant of the initial mirror surface (e.g. `-1` = parabola). |
-| `delta` | Radial weighting mode: `1` weights only the on-axis point (delta-function-like); `0` uses a broader Gaussian-weighted region instead. Also sets the `d`/`e` prefix on generated filenames. |
-| `tol` | Gradient-magnitude convergence tolerance — stops the run once the step size drops below this. Used by the plain gradient-descent/Adam scripts; not by `cma_es/`. |
-| `sg`, `order` | Accepted by `create_params.py` but not actually wired into the current physics code's z-weighting window (it always uses a flat window, ignoring these) — legacy/unused. |
-| `stop` | Iteration count past which a run aborts early as a failed/degenerate solution if `mu` (shape correlation) still hasn't passed 0.5 — used by some Adam/fixed-lr field-matching scripts as an early-exit for runs that clearly aren't converging. |
-| `temp`, `factor` | Not read by any current script — legacy, left over from an earlier example this file's default `params` dict was copied from. |
 
-Optimizer-specific extras (`sigma0`, `restarts`, `seed_offset`, `workers` for
-`cma_es/`; `beta1`, `beta2`, `eps_adam` for Adam; `b`/`alpha`/`lam` for the
-penalized FOM — see [Terminology](#terminology)) aren't part of
-`create_params.py`'s dict; each `main_*.py` reads them with a sensible
-default via `params.get(...)` if omitted.
+**Optimization / solver:**
+
+| Key | Meaning |
+|---|---|
+| `lr` | Learning rate / step size. Used by every gradient-based optimizer (Adam, fixed-lr, SGDR, reduce-on-plateau); ignored by `cma_es/` (CMA-ES has no learning rate). |
+| `steps` | Maximum number of optimization iterations (generations, for `cma_es/`). |
+| `tol` | Gradient-magnitude convergence tolerance — stops the run once the step size drops below this. Used by the plain gradient-descent/Adam scripts; not by `cma_es/`. |
+| `stop` | Iteration count past which a run aborts early as a failed/degenerate solution if `mu` (shape correlation) still hasn't passed 0.5 — used by some Adam/fixed-lr field-matching scripts as an early-exit for runs that clearly aren't converging. |
+| `skip` | Save data/frames to disk every `skip` steps. |
+
+None of the optimizer-specific parameters below are in `create_params.py`'s
+dict — each `main_*.py` reads them with a sensible default via
+`params.get(...)` if omitted, so they only need to be set to override that
+default.
+
+**Adam** (`adam/`, `adam_newfom/`; also the base moment update inside `adam_sgdr/`):
+
+| Key | Meaning |
+|---|---|
+| `beta1` | First-moment decay rate (default `0.9`). |
+| `beta2` | Second-moment decay rate (default `0.999`). |
+| `eps_adam` | Numerical-stability constant in the denominator of the Adam update (default `1e-8`). |
+
+**SGDR** (`sgdr/`, `adam_sgdr/`) — cosine-annealed learning rate with warm restarts:
+
+| Key | Meaning |
+|---|---|
+| `lr_min` | Minimum learning rate at the bottom of each cosine cycle (default `lr * 1e-3`). |
+| `T_cycle` | Length, in steps, of the first restart cycle (default `200`). |
+| `T_mult` | Multiplier applied to the cycle length after each restart (default `2`). |
+| `reset_moments` | `adam_sgdr/` only — whether to reset the Adam moment estimates (`m`, `v`) at each cycle restart (default `0`/off). |
+
+**Reduce-on-plateau** (`rop/`) — halves the learning rate when `|mu - 1|` stops improving:
+
+| Key | Meaning |
+|---|---|
+| `rop_factor` | Multiplier applied to `lr` each time a plateau is detected (default `0.5`). |
+| `rop_patience` | Number of steps without sufficient improvement before triggering a reduction (default `500`). |
+| `rop_threshold` | Minimum improvement in `|mu - 1|` required to reset the patience counter (default `1e-4`). |
+| `rop_min_lr` | Floor below which `lr` is never reduced further (default `1e-12`). |
+
+**CMA-ES** (`cma_es/`) — gradient-free, so it has no `lr`/`tol`/`beta*` at all:
+
+| Key | Meaning |
+|---|---|
+| `sigma0` | Initial step size, in units of each Zernike coefficient's own scale (default `0.3`). |
+| `restarts` | Number of independent restarts, each with a fresh random seed, run to guard against landing in the wrong basin (default `5`). |
+| `seed_offset` | Offsets every restart's seed by this amount — lets multiple separate invocations (e.g. one per OS process) claim disjoint seed blocks (default `0`). |
+| `workers` | Number of restarts run in parallel via a fork-based process pool (default `min(restarts, cpu_count)`). |
