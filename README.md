@@ -144,6 +144,32 @@ Output of the root-level comparison scripts (`plot_method_comparison.py`,
 `plot_adam_vs_newfom_n4.py`), which compare results *across* the experiment
 directories above.
 
+### `legacy_ff_adjoint/`
+
+Early derivation/validation notebooks from when this code was first being built
+up, kept for reference. Only the still-useful ones were kept; the rest (dev
+drafts of what's now `without_zernike/adjoint_field.py`, scratch debugging,
+one-off plotting utilities) were pruned as redundant. Not wired up to run as-is
+— they're missing `BesselZeroes0.csv` and other run-output files they
+originally had alongside them.
+
+- `mathematica/` — 5 original Mathematica notebooks (`BesselRoots.nb`,
+  `FOM.nb`, `exp.nb`, `fourier.nb`, `psi.nb`), carried over untouched.
+- `notebooks/` — 4 surviving Python notebooks, each renamed and given a
+  descriptive top markdown cell explaining what it validates and why it's
+  still relevant:
+  - `fom_mu_analytic_validation.ipynb` — checks the `FOM`/`mu` formulas peak
+    correctly at the true focus, using an analytic Gaussian field (no DHT).
+  - `pulsed_fresnel_propagation.ipynb` — pulsed/broadband Fresnel propagation
+    through a lens; current code is monochromatic-only, so this is the only
+    exploration of that regime in either repo.
+  - `dht_gaussian_beam_validation.ipynb` — validates DHT propagation against
+    the analytic Gaussian beam, free-space and through a lens.
+  - `adjoint_psi_hat_analytic_check.ipynb` — validates the numeric adjoint
+    kernel `psi_hat` against a closed-form `scipy.special.expi` solution.
+  - `gaussian_fn.py` — shared analytic-Gaussian-beam helper functions,
+    imported by `adjoint_psi_hat_analytic_check.ipynb`.
+
 ## Terminology
 
 - **"axi"** means axiparabola, not axicon.

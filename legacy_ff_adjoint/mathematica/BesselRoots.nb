@@ -1,0 +1,86 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      2789,         78]
+NotebookOptionsPosition[      2192,         60]
+NotebookOutlinePosition[      2619,         76]
+CellTagsIndexPosition[      2576,         73]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Zeroes", "=", 
+   RowBox[{
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"N", "[", 
+       RowBox[{"BesselJZero", "[", 
+        RowBox[{"0", ",", "k"}], "]"}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"k", ",", "1", ",", 
+        SuperscriptBox["2", "14"]}], "}"}]}], "]"}], "//", "TableForm"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Export", "[", 
+   RowBox[{"\"\<BesselZeroes0.csv\>\"", ",", "Zeroes"}], "]"}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.8426193711650457`*^9, 3.842619402201885*^9}, {
+  3.8426194787344646`*^9, 3.842619506431896*^9}, {3.8426195542517147`*^9, 
+  3.842619600683111*^9}, {3.842619667636549*^9, 3.8426196711835012`*^9}, {
+  3.84261975819107*^9, 3.8426197779583797`*^9}, {3.842964659406808*^9, 
+  3.8429646703601027`*^9}, {3.8429647328458967`*^9, 3.842964734717443*^9}, {
+  3.8429648031359377`*^9, 3.842964810682403*^9}, {3.8461440936993437`*^9, 
+  3.846144097383808*^9}, {3.846144168631558*^9, 3.846144170860231*^9}, {
+  3.907080231395342*^9, 3.907080233004303*^9}, {3.907080748865383*^9, 
+  3.9070807577112894`*^9}},
+ CellLabel->"In[9]:=",ExpressionUUID->"aed71da8-f30e-490a-9eac-c3d9ec69b98c"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Directory", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.9070806474305897`*^9, 3.9070806504308877`*^9}},
+ CellLabel->"In[8]:=",ExpressionUUID->"67d798ed-173e-420a-be06-4660c1783082"],
+
+Cell[BoxData["\<\"C:\\\\Users\\\\gjkim\\\\Documents\"\>"], "Output",
+ CellChangeTimes->{3.907080650772758*^9},
+ CellLabel->"Out[8]=",ExpressionUUID->"9d54a0b7-9f27-4748-97da-d5f01363bb00"]
+}, Open  ]]
+},
+WindowSize->{807.5999999999999, 574.1999999999999},
+WindowMargins->{{19.8, Automatic}, {Automatic, 0}},
+FrontEndVersion->"12.1 for Microsoft Windows (64-bit) (June 19, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"b9b04c59-66c1-4d48-a5be-0426f070c963"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 1197, 26, 51, "Input",ExpressionUUID->"aed71da8-f30e-490a-9eac-c3d9ec69b98c"],
+Cell[CellGroupData[{
+Cell[1780, 50, 205, 3, 28, "Input",ExpressionUUID->"67d798ed-173e-420a-be06-4660c1783082"],
+Cell[1988, 55, 188, 2, 81, "Output",ExpressionUUID->"9d54a0b7-9f27-4748-97da-d5f01363bb00"]
+}, Open  ]]
+}
+]
+*)
+
