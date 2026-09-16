@@ -6,6 +6,11 @@
 **/*.csv
 !**/BesselZeroes*.csv
 
+# Preserved example run (see README) -- keep its CSV data despite the blanket
+# rule above. Its I_OA/ frame dumps are still excluded by the rule below,
+# same as every other run.
+!adam/para2para/runs/para2para_adam_d_lr_1e-08_ft_0.05_fi_0.045_n_3_nr_1000_rmx_5_nzf_1001_dz_0.02_L_0.05_st_10000_sk_1_fn_25_eps1e-6/*.csv
+
 # Per-iteration frame dumps used only to build videos/GIFs -- disposable,
 # regeneratable from a run's own saved .csv data. Top-level summary plots
 # (fom_mu.pdf, mirror_comp.pdf, etc.) are not affected.
